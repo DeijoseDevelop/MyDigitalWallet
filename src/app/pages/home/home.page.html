@@ -1,13 +1,67 @@
-<ion-header [translucent]="true">
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title>home</ion-title>
+    <div class="toolbar-content">
+      <div class="greeting">
+        <p class="greeting-sub">Bienvenido 👋</p>
+        <h2 class="greeting-name">{{ user?.nombre }} {{ user?.apellido }}</h2>
+      </div>
+      <ion-button fill="clear" (click)="onLogout()">
+        <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">home</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="home-content">
+  <div class="home-inner">
+
+    <section class="section-balance">
+      <app-skeleton-loading *ngIf="loading" type="balance"></app-skeleton-loading>
+      <app-balance-display *ngIf="!loading" [balance]="user?.balance ?? 0"></app-balance-display>
+    </section>
+
+    <section>
+      <app-quick-actions (actionSelected)="onQuickAction($event)"></app-quick-actions>
+    </section>
+
+    <section class="section-cards">
+      <div class="section-header">
+        <h3>Mis Tarjetas</h3>
+        <ion-button fill="clear" size="small" (click)="goToAddCard()">
+          <ion-icon name="add-outline" slot="start"></ion-icon>
+          Agregar
+        </ion-button>
+      </div>
+
+      <app-skeleton-loading *ngIf="loading" type="card"></app-skeleton-loading>
+
+      <ng-container *ngIf="!loading">
+        <ion-slides *ngIf="cards.length > 0" [options]="{ slidesPerView: 1.1, spaceBetween: 12 }">
+          <ion-slide *ngFor="let card of cards">
+            <app-card [card]="card"></app-card>
+          </ion-slide>
+        </ion-slides>
+
+        <div *ngIf="cards.length === 0" class="empty-cards" (click)="goToAddCard()">
+          <ion-icon name="card-outline"></ion-icon>
+          <p>Agrega tu primera tarjeta</p>
+        </div>
+      </ng-container>
+    </section>
+
+    <section class="section-transactions">
+      <app-skeleton-loading *ngIf="loading" type="list" [lines]="4"></app-skeleton-loading>
+      <app-transaction-list
+        *ngIf="!loading"
+        [transactions]="transactions"
+      ></app-transaction-list>
+    </section>
+
+  </div>
 </ion-content>
+
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button (click)="goToPayment()">
+    <ion-icon name="receipt-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

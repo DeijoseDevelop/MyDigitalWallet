@@ -1,0 +1,47 @@
+.toolbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+
+  .greeting-sub  { font-size: 13px; color: var(--ion-color-medium); margin: 0; }
+  .greeting-name { font-size: 18px; font-weight: 700; margin: 2px 0 0; }
+}
+
+.home-content {
+  --background: var(--ion-color-light, #f4f5f8);
+}
+
+.home-inner {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  h3 { font-size: 16px; font-weight: 700; margin: 0; }
+}
+
+.empty-cards {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px;
+  background: var(--ion-background-color);
+  border-radius: 16px;
+  color: var(--ion-color-medium);
+  cursor: pointer;
+  border: 2px dashed var(--ion-color-light-shade);
+
+  ion-icon { font-size: 40px; margin-bottom: 8px; }
+  p { font-size: 14px; }
+}
+
+.section-transactions {
+  padding-bottom: 80px;
+}
