@@ -1,34 +1,48 @@
-import { Injectable } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from '@angular/fire/auth';
+// Importamos directamente del SDK de Firebase, NO de AngularFire
+import { 
+  getAuth, 
+  signInWithCredential, 
+  GoogleAuthProvider, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut,
+  onAuthStateChanged
+} from 'firebase/auth';
 import { GoogleSignIn } from '@capawesome/capacitor-google-sign-in';
 import { environment } from 'src/environments/environment';
 
-@Injectable({
-  providedIn: 'root'
-})
 export class AuthService {
+  private auth = getAuth();
 
-  constructor(private auth: Auth) {
+  constructor() {
     this.initGoogleAuth();
   }
 
   private async initGoogleAuth() {
     await GoogleSignIn.initialize({
-      clientId: environment.firebase.webId, 
-      scopes: ['profile', 'email'], 
+      clientId: environment.firebase.webId,
+      scopes: ['profile', 'email'],
     });
+  }
+
+  getCurrentUser() {
+    return this.auth.currentUser;
   }
 
   async loginWithGoogle() {
     try {
-      const result = await GoogleSignIn.signIn();
+      const googleResult = await GoogleSignIn.signIn();
 
-      console.log('Token recibido de Google:', result.idToken);
-      console.log('Email del usuario:', result.email);
+      const credential = GoogleAuthProvider.credential(googleResult.idToken);
+      const userCredential = await signInWithCredential(this.auth, credential);
+
+      const firebaseJWT = await userCredential.user.getIdToken();
+
+      console.log('🌟 TOKEN DE FIREBASE PARA EL PROFE:', firebaseJWT);
       
-      return result;
+      return userCredential.user;
     } catch (error) {
-      console.error('Error en Google Sign-In', error);
+      console.error('Error en Login:', error);
       throw error;
     }
   }

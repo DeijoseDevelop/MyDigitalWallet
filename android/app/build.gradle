@@ -30,11 +30,7 @@ repositories {
     }
 }
 
-plugins {
-  id 'com.android.application'
-  id 'com.google.gms.google-services'
-
-}
+// Removed redundant plugins block to avoid conflicts and maintain standard Capacitor structure
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')

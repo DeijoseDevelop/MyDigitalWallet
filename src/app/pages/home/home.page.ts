@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from 'src/app/core/services/auth';
 
 @Component({
   selector: 'app-home',
@@ -8,9 +9,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomePage implements OnInit {
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    const user = this.authService.getCurrentUser();
+    
+    if (user) {
+      const token = await user.getIdToken();
+      console.log('--- TOKEN PARA POSTMAN ---');
+      console.log(token);
+      console.log('---------------------------');
+    } else {
+      console.warn('No se encontró un usuario autenticado.');
+    }
   }
 
 }
