@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastController, LoadingController, Platform } from '@ionic/angular';
+import { LoadingController, Platform } from '@ionic/angular';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { FirestoreService } from 'src/app/core/services/firestore.service';
 import { BiometricService } from 'src/app/core/services/biometric.service';
 import { UserService } from 'src/app/core/services/user.service';
+import { ToastService } from 'src/app/core/services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -25,7 +26,7 @@ export class LoginPage implements OnInit {
     private biometricService: BiometricService,
     private userService: UserService,
     private router: Router,
-    private toastCtrl: ToastController,
+    private toastService: ToastService,
     private loadingCtrl: LoadingController,
     private platform: Platform
   ) {}
@@ -44,13 +45,13 @@ export class LoginPage implements OnInit {
     } catch (error: any) {
       const code = error?.code;
       if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
-        this.showToast('Correo o contraseña incorrectos.');
+        await this.toastService.error('Correo o contraseña incorrectos.');
       } else if (code === 'auth/account-exists-with-different-credential') {
-        this.showToast('Este correo está registrado con Google. Usa "Continuar con Google".');
+        await this.toastService.error('Este correo está registrado con Google. Usa "Continuar con Google".');
       } else if (code === 'auth/too-many-requests') {
-        this.showToast('Demasiados intentos. Intenta más tarde.');
+        await this.toastService.error('Demasiados intentos. Intenta más tarde.');
       } else {
-        this.showToast('Error al iniciar sesión. Revisa tus datos.');
+        await this.toastService.error('Error al iniciar sesión. Revisa tus datos.');
       }
     } finally {
       loading.dismiss();
@@ -63,13 +64,13 @@ export class LoginPage implements OnInit {
 
     const verified = await this.biometricService.verify('Inicia sesión con tu huella');
     if (!verified) {
-      this.showToast('Autenticación biométrica fallida.');
+      await this.toastService.error('Autenticación biométrica fallida.');
       return;
     }
 
     const creds = await this.biometricService.getCredentials();
     if (!creds) {
-      this.showToast('No hay credenciales guardadas. Inicia sesión primero.');
+      await this.toastService.error('No hay credenciales guardadas. Inicia sesión primero.');
       return;
     }
 
@@ -79,7 +80,7 @@ export class LoginPage implements OnInit {
       await this.authService.login(creds.username, creds.password);
       this.router.navigateByUrl('/home', { replaceUrl: true });
     } catch {
-      this.showToast('Error al iniciar sesión con biometría.');
+      await this.toastService.error('Error al iniciar sesión con biometría.');
     } finally {
       loading.dismiss();
     }
@@ -96,14 +97,7 @@ export class LoginPage implements OnInit {
         this.router.navigateByUrl('/complete-profile', { replaceUrl: true });
       }
     } catch {
-      this.showToast('Error con Google Sign-In');
+      await this.toastService.error('Error con Google Sign-In');
     }
-  }
-
-  async showToast(msg: string) {
-    const toast = await this.toastCtrl.create({
-      message: msg, duration: 2500, color: 'danger', position: 'bottom'
-    });
-    toast.present();
   }
 }

@@ -32,8 +32,16 @@ export class PaymentSimulatorComponent implements OnInit {
     private userService: UserService,
   ) { }
 
-  ngOnInit() {
-    if (this.cards.length > 0) this.selectedCard = this.cards[0];
+  async ngOnInit() {
+    const user = await this.userService.getUserData();
+    const defaultId = user?.defaultCardId;
+
+    if (defaultId) {
+      this.selectedCard = this.cards.find(c => c.id === defaultId) ?? this.cards[0] ?? null;
+    } else {
+      this.selectedCard = this.cards[0] ?? null;
+    }
+
     this.refreshMerchants();
   }
 
@@ -43,7 +51,6 @@ export class PaymentSimulatorComponent implements OnInit {
   }
 
   selectCard(card: Card) { this.selectedCard = card; }
-
   selectMerchant(merchant: FakeMerchant) {
     this.selectedMerchant = this.selectedMerchant?.name === merchant.name ? null : merchant;
   }

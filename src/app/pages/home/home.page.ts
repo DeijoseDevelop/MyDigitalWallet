@@ -1,6 +1,6 @@
-import { Component, OnInit, AfterViewInit, ElementRef, QueryList, ViewChildren, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { LoadingController } from '@ionic/angular';
 import { animate, stagger, utils } from 'animejs';
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 import { AuthService } from 'src/app/core/services/auth.service';
@@ -40,10 +40,12 @@ export class HomePage implements OnInit, AfterViewInit {
   dragX = 0;
   isDragging = false;
   isAnimating = false;
+
   private touchStartX = 0;
   private velocity = 0;
   private lastX = 0;
   private lastTime = 0;
+  private safetyTimer: any = null;
 
   constructor(
     private authService: AuthService,
@@ -52,19 +54,14 @@ export class HomePage implements OnInit, AfterViewInit {
     private paymentService: PaymentService,
     private modalService: ModalService,
     private dialogService: DialogService,
-    private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
     private toastService: ToastService,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) { }
 
-  async ngOnInit() {
-    await this.loadData();
-  }
-
-  ngAfterViewInit() {
-    this.animateEntrance();
-  }
+  async ngOnInit() { await this.loadData(); }
+  ngAfterViewInit() { this.animateEntrance(); }
 
   async ionViewWillEnter() {
     await this.loadData();
@@ -80,7 +77,6 @@ export class HomePage implements OnInit, AfterViewInit {
     ].filter(Boolean);
 
     utils.set(sections, { opacity: 0, translateY: 32 });
-
     animate(sections, {
       opacity: [0, 1],
       translateY: [32, 0],
@@ -100,8 +96,23 @@ export class HomePage implements OnInit, AfterViewInit {
       ]);
       this.user = user;
       this.cards = cards;
-      this.orderedCards = [...cards];
       this.transactions = transactions;
+
+      const defaultId = user?.defaultCardId;
+      if (defaultId && cards.length > 1) {
+        const defaultIdx = cards.findIndex(c => c.id === defaultId);
+        if (defaultIdx > 0) {
+          const reordered = [...cards];
+          const [def] = reordered.splice(defaultIdx, 1);
+          reordered.unshift(def);
+          this.orderedCards = reordered;
+        } else {
+          this.orderedCards = [...cards];
+        }
+      } else {
+        this.orderedCards = [...cards];
+      }
+
     } finally {
       this.loading = false;
     }
@@ -114,12 +125,6 @@ export class HomePage implements OnInit, AfterViewInit {
   getTransform(i: number): string {
     const peekY = i * this.CARD_PEEK;
     const scale = 1 - i * this.CARD_SCALE;
-
-    if (i === 0 && this.isDragging) {
-      const lift = Math.min(Math.abs(this.dragX) * 0.06, 16);
-      const rot = this.dragX * 0.03;
-      return `translateX(${this.dragX}px) translateY(${-lift}px) rotate(${rot}deg) scale(${scale})`;
-    }
 
     if (i === 1 && this.isDragging) {
       const progress = Math.min(Math.abs(this.dragX) / this.SWIPE_THRESHOLD, 1);
@@ -145,35 +150,61 @@ export class HomePage implements OnInit, AfterViewInit {
     return i >= 3 ? 0 : 1;
   }
 
+  private getAllStackItems(): NodeListOf<HTMLElement> {
+    return document.querySelectorAll<HTMLElement>('.stack-item');
+  }
+
+  private getTopEl(): HTMLElement | null {
+    return document.querySelector<HTMLElement>('.stack-item.is-top');
+  }
+
+  private clearAllInlineStyles() {
+    this.getAllStackItems().forEach(el => {
+      el.style.transition = '';
+      el.style.transform = '';
+      el.style.opacity = '';
+    });
+  }
+
   onTouchStart(event: TouchEvent) {
     if (this.isAnimating || this.orderedCards.length <= 1) return;
+
+    this.clearAllInlineStyles();
+
     this.touchStartX = event.touches[0].clientX;
     this.lastX = this.touchStartX;
     this.lastTime = Date.now();
     this.velocity = 0;
     this.isDragging = true;
+    this.dragX = 0;
   }
 
   onTouchMove(event: TouchEvent) {
     if (!this.isDragging) return;
+
     const now = Date.now();
     const currentX = event.touches[0].clientX;
     const dt = now - this.lastTime;
 
-    if (dt > 0) {
-      this.velocity = (currentX - this.lastX) / dt;
-    }
-
+    if (dt > 0) this.velocity = (currentX - this.lastX) / dt;
     this.lastX = currentX;
     this.lastTime = now;
     this.dragX = currentX - this.touchStartX;
+
+    const topEl = this.getTopEl();
+    if (topEl) {
+      const lift = Math.min(Math.abs(this.dragX) * 0.06, 16);
+      const rot = this.dragX * 0.025;
+      topEl.style.transform = `translateX(${this.dragX}px) translateY(${-lift}px) rotate(${rot}deg)`;
+      topEl.style.transition = 'none';
+    }
   }
 
   async onTouchEnd(_event: TouchEvent) {
     if (!this.isDragging) return;
     this.isDragging = false;
 
-    const flick = Math.abs(this.velocity) > 0.5;
+    const flick = Math.abs(this.velocity) > 0.4;
 
     if (Math.abs(this.dragX) >= this.SWIPE_THRESHOLD || flick) {
       await Haptics.impact({ style: ImpactStyle.Medium });
@@ -184,55 +215,60 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   private snapBack() {
-    const obj = { x: this.dragX };
-
-    animate(obj, {
-      x: 0,
-      duration: 400,
-      ease: 'spring(1, 80, 12, 0)',
-      onUpdate: () => { this.dragX = obj.x; }
-    });
+    const topEl = this.getTopEl();
+    if (topEl) {
+      topEl.style.transition = 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      topEl.style.transform = '';
+      setTimeout(() => { topEl.style.transition = ''; }, 360);
+    }
+    this.dragX = 0;
   }
 
   private commitSwipe() {
+    if (this.isAnimating) return;
     this.isAnimating = true;
-    const direction = this.dragX > 0 ? 1 : -1;
-    const exitX = direction * (window.innerWidth + 100);
-    const speed = Math.max(Math.abs(this.velocity) * 300, 250);
-    const obj = { x: this.dragX };
 
-    animate(obj, {
-      x: exitX,
-      duration: speed,
-      ease: 'easeOutCubic',
-      onUpdate: () => { this.dragX = obj.x; },
-      onComplete: () => {
-        const [first, ...rest] = this.orderedCards;
-        this.orderedCards = [...rest, first];
-        this.dragX = 0;
-        setTimeout(() => {
-          this.isAnimating = false;
-          this.animateNewTopCard();
-        }, 30);
-      }
-    });
+    const topEl = this.getTopEl();
+    const direction = this.dragX > 0 ? 1 : -1;
+    const screenW = window.innerWidth;
+
+    if (!topEl) {
+      this.doSwap();
+      return;
+    }
+
+    topEl.style.transition = 'transform 0.22s ease-out, opacity 0.22s ease-out';
+    topEl.style.transform = `translateX(${direction * (screenW + 100)}px) rotate(${direction * 18}deg) scale(0.88)`;
+    topEl.style.opacity = '0';
+
+    if (this.safetyTimer) clearTimeout(this.safetyTimer);
+    this.safetyTimer = setTimeout(() => this.doSwap(), 260);
+
+    const onEnd = (e: TransitionEvent) => {
+      if (e.propertyName !== 'transform') return;
+      topEl.removeEventListener('transitionend', onEnd as EventListener);
+      clearTimeout(this.safetyTimer);
+      this.doSwap();
+    };
+
+    topEl.addEventListener('transitionend', onEnd as EventListener);
   }
 
-  private animateNewTopCard() {
-    const topCard = document.querySelector('.stack-item.is-top');
-    if (!topCard) return;
+  private doSwap() {
+    if (!this.isAnimating) return;
 
-    animate(topCard, {
-      scale: [0.92, 1],
-      opacity: [0.6, 1],
-      duration: 350,
-      ease: 'easeOutBack',
+    this.clearAllInlineStyles();
+
+    this.ngZone.run(() => {
+      const [first, ...rest] = this.orderedCards;
+      this.orderedCards = [...rest, first];
+      this.dragX = 0;
+      this.isAnimating = false;
     });
   }
 
   async onQuickAction(action: QuickAction) {
     await Haptics.impact({ style: ImpactStyle.Light });
-
     if (action === 'pay') {
       await this.openPaymentSimulator();
     } else if (action === 'recharge') {
@@ -243,7 +279,11 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   async openPaymentSimulator() {
-    const { data } = await this.modalService.open(PaymentSimulatorComponent, { cards: this.cards });
+    const { data } = await this.modalService.open(
+      PaymentSimulatorComponent,
+      { cards: this.orderedCards },
+      true
+    );
     if (data?.success) {
       await Haptics.notification({ type: NotificationType.Success });
       await this.loadData();
@@ -251,26 +291,19 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   async openRechargeDialog() {
-    const alert = await this.alertCtrl.create({
-      header: 'Recargar saldo',
-      inputs: [{ name: 'amount', type: 'number', placeholder: 'Monto a recargar', min: 1 }],
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Recargar',
-          handler: async (data) => {
-            const amount = Number(data.amount);
-            if (!amount || amount <= 0) {
-              await this.toastService.error('Ingresa un monto válido.');
-              return false;
-            }
-            await this.processRecharge(amount);
-            return true;
-          }
-        }
-      ]
-    });
-    await alert.present();
+    const rawValue = await this.dialogService.prompt(
+      'Recargar saldo',
+      'Ingresa el monto a recargar.',
+      'Monto a recargar'
+    );
+
+    if (rawValue === null) return;
+    const amount = Number(rawValue);
+    if (!amount || amount <= 0) {
+      await this.toastService.error('Ingresa un monto válido.');
+      return;
+    }
+    await this.processRecharge(amount);
   }
 
   private async processRecharge(amount: number) {
@@ -296,7 +329,6 @@ export class HomePage implements OnInit, AfterViewInit {
   private animateBalancePulse() {
     const el = this.balanceRef?.nativeElement;
     if (!el) return;
-
     animate(el, {
       scale: [1, 1.03, 1],
       duration: 400,
@@ -305,7 +337,7 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   async onLogout() {
-    const confirmed = await this.dialogService.confirm('Cerrar sesión', '¿Estás seguro de que quieres salir?');
+    const confirmed = await this.dialogService.confirm('Cerrar sesión', '¿Estás seguro?');
     if (confirmed) {
       await Haptics.impact({ style: ImpactStyle.Medium });
       await this.authService.logout();
@@ -313,15 +345,12 @@ export class HomePage implements OnInit, AfterViewInit {
     }
   }
 
-  goToAddCard() {
-    this.router.navigateByUrl('/add-card');
+  trackCard(_: number, card: Card): string {
+    return card.id ?? card.cardNumber;
   }
 
-  goToPayment() {
-    this.router.navigateByUrl('/payment');
-  }
-
-  goToProfile() {
-    this.router.navigateByUrl('/profile');
-  }
+  goToAddCard() { this.router.navigateByUrl('/add-card'); }
+  goToPayment() { this.router.navigateByUrl('/payment'); }
+  goToProfile() { this.router.navigateByUrl('/profile'); }
+  goToDefault() { this.router.navigateByUrl('/default-card'); }
 }

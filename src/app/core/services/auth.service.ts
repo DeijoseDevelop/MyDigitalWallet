@@ -1,4 +1,3 @@
-// Importamos directamente del SDK de Firebase, NO de AngularFire
 import {
   getAuth,
   signInWithCredential,

@@ -12,6 +12,7 @@ export interface UserProfile {
   pais: string;
   balance: number;
   biometryEnabled: boolean;
+  defaultCardId?: string;
   createdAt: any;
 }
 
@@ -21,7 +22,7 @@ export class UserService {
   constructor(
     private firestoreService: FirestoreService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   getCurrentUid(): string | null {
     return this.authService.getCurrentUser()?.uid ?? null;
@@ -43,5 +44,11 @@ export class UserService {
     const uid = this.getCurrentUid();
     if (!uid) return;
     await this.firestoreService.createDocument('users', uid, { balance: newBalance });
+  }
+
+  async setDefaultCard(cardId: string): Promise<void> {
+    const uid = this.getCurrentUid();
+    if (!uid) return;
+    await this.firestoreService.createDocument('users', uid, { defaultCardId: cardId });
   }
 }

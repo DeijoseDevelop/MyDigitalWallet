@@ -13,6 +13,7 @@ import { PaymentSimulatorComponent } from './components/payment-simulator/paymen
 import { SkeletonLoadingComponent } from './components/skeleton-loading/skeleton-loading.component';
 import { CalendarComponent } from './components/calendar/calendar.component';
 import { CardComponent } from './components/card/card.component';
+import { CardCarouselComponent } from './components/card-carousel/card-carousel.component';
 
 const COMPONENTS = [
   CardComponent,
@@ -23,7 +24,8 @@ const COMPONENTS = [
   CustomInputComponent,
   PaymentSimulatorComponent,
   SkeletonLoadingComponent,
-  CalendarComponent
+  CalendarComponent,
+  CardCarouselComponent
 ];
 
 @NgModule({

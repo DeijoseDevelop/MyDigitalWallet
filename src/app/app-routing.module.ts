@@ -47,7 +47,17 @@ const routes: Routes = [
   },
   {
     path: 'profile',
-    loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule)
+    loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfilePageModule)
+  },
+  {
+    path: 'default-card',
+    loadChildren: () => import('./pages/default-card/default-card.module')
+      .then(m => m.DefaultCardPageModule),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'default-card',
+    loadChildren: () => import('./pages/default-card/default-card.module').then( m => m.DefaultCardPageModule)
   },
 ];
 

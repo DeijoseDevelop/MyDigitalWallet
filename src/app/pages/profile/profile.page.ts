@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { LoadingController } from '@ionic/angular';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { UserService, UserProfile } from 'src/app/core/services/user.service';
 import { BiometricService } from 'src/app/core/services/biometric.service';
@@ -26,7 +26,6 @@ export class ProfilePage implements OnInit {
     private biometricService: BiometricService,
     private toastService: ToastService,
     private dialogService: DialogService,
-    private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
     private router: Router
   ) {}
@@ -42,7 +41,7 @@ export class ProfilePage implements OnInit {
   async loadData() {
     this.loading = true;
     try {
-      this.user              = await this.userService.getUserData();
+      this.user               = await this.userService.getUserData();
       this.biometricAvailable = await this.biometricService.isAvailable();
     } finally {
       this.loading = false;
@@ -61,7 +60,11 @@ export class ProfilePage implements OnInit {
   }
 
   private async enableBiometric() {
-    const password = await this.askPassword();
+    const password = await this.dialogService.prompt(
+      'Confirma tu contraseña',
+      'Por seguridad, ingresa tu contraseña para activar la biometría.',
+      'Contraseña'
+    );
     if (!password) return;
 
     const loading = await this.loadingCtrl.create({ message: 'Verificando...' });
@@ -119,25 +122,6 @@ export class ProfilePage implements OnInit {
     } finally {
       loading.dismiss();
     }
-  }
-
-  private askPassword(): Promise<string | null> {
-    return new Promise(async resolve => {
-      const alert = await this.alertCtrl.create({
-        header: 'Confirma tu contraseña',
-        message: 'Por seguridad, ingresa tu contraseña para activar la biometría.',
-        inputs: [{
-          name: 'password',
-          type: 'password',
-          placeholder: 'Contraseña',
-        }],
-        buttons: [
-          { text: 'Cancelar', role: 'cancel', handler: () => resolve(null) },
-          { text: 'Confirmar', handler: (data) => resolve(data.password || null) }
-        ]
-      });
-      await alert.present();
-    });
   }
 
   async onLogout() {

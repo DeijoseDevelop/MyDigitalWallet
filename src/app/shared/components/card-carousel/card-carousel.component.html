@@ -1,0 +1,28 @@
+<div class="carousel-wrapper">
+
+  <div class="carousel-area" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)"
+    (touchend)="onTouchEnd()">
+    <button class="arrow-btn arrow-left" (click)="prev()" [disabled]="cards.length <= 1">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
+
+    <div class="carousel-track">
+      <app-card *ngIf="activeCard" [card]="activeCard"></app-card>
+    </div>
+
+    <button class="arrow-btn arrow-right" (click)="next()" [disabled]="cards.length <= 1">
+      <ion-icon name="chevron-forward-outline"></ion-icon>
+    </button>
+  </div>
+
+  <div class="default-badge" *ngIf="activeCard?.id === defaultCardId">
+    <ion-icon name="star"></ion-icon>
+    Tarjeta por defecto
+  </div>
+
+  <div class="dots" *ngIf="cards.length > 1">
+    <button *ngFor="let card of cards; let i = index" class="dot" [class.active]="i === activeIndex"
+      (click)="goTo(i)"></button>
+  </div>
+
+</div>

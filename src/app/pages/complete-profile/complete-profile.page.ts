@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoadingController, ToastController } from '@ionic/angular';
+import { LoadingController } from '@ionic/angular';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { FirestoreService } from 'src/app/core/services/firestore.service';
+import { ToastService } from 'src/app/core/services/toast.service';
 
 @Component({
   selector: 'app-complete-profile',
@@ -24,7 +25,7 @@ export class CompleteProfilePage implements OnInit {
     private firestoreService: FirestoreService,
     private router: Router,
     private loadingCtrl: LoadingController,
-    private toastCtrl: ToastController
+    private toastService: ToastService
   ) { }
 
   ngOnInit() {
@@ -48,7 +49,7 @@ export class CompleteProfilePage implements OnInit {
 
   async onSubmit() {
     if (this.form.invalid) {
-      this.showToast('Por favor completa todos los campos.');
+      await this.toastService.error('Por favor completa todos los campos.');
       return;
     }
 
@@ -79,17 +80,10 @@ export class CompleteProfilePage implements OnInit {
       if (error?.code === 'auth/provider-already-linked') {
         this.router.navigateByUrl('/home', { replaceUrl: true });
       } else {
-        this.showToast(error.message || 'Error al guardar el perfil.');
+        await this.toastService.error(error.message || 'Error al guardar el perfil.');
       }
     } finally {
       loading.dismiss();
     }
-  }
-
-  async showToast(msg: string) {
-    const toast = await this.toastCtrl.create({
-      message: msg, duration: 3000, color: 'danger'
-    });
-    toast.present();
   }
 }

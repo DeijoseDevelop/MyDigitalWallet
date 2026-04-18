@@ -1,0 +1,66 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Tarjeta Predeterminada</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page-content">
+
+  <app-skeleton-loading *ngIf="loading" type="card"></app-skeleton-loading>
+
+  <ng-container *ngIf="!loading">
+
+    <div *ngIf="cards.length === 0" class="empty-state">
+      <ion-icon name="card-outline"></ion-icon>
+      <p>No tienes tarjetas registradas</p>
+      <ion-button shape="round" routerLink="/add-card">Agregar tarjeta</ion-button>
+    </div>
+
+    <div *ngIf="cards.length > 0" class="carousel-container">
+
+      <p class="carousel-hint">Desliza para cambiar de tarjeta</p>
+
+      <div class="carousel-area" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)"
+        (touchend)="onTouchEnd()">
+        <button class="arrow-btn" (click)="prev()" [disabled]="cards.length <= 1">
+          <ion-icon name="chevron-back-outline"></ion-icon>
+        </button>
+
+        <div class="carousel-track">
+          <app-card *ngIf="activeCard" [card]="activeCard"></app-card>
+        </div>
+
+        <button class="arrow-btn" (click)="next()" [disabled]="cards.length <= 1">
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </button>
+      </div>
+
+      <div class="dots" *ngIf="cards.length > 1">
+        <button *ngFor="let card of cards; let i = index" class="dot" [class.active]="i === activeIndex"
+          (click)="goTo(i)"></button>
+      </div>
+
+      <div class="card-info">
+        <h3>{{ activeCard?.cardholderName }}</h3>
+        <p>•••• •••• •••• {{ activeCard?.cardNumber }}</p>
+        <p class="card-type">{{ activeCard?.type | uppercase }} · Vence {{ activeCard?.expiryDate }}</p>
+      </div>
+
+      <div class="default-badge" *ngIf="isDefault">
+        <ion-icon name="star"></ion-icon>
+        Esta es tu tarjeta predeterminada
+      </div>
+
+      <ion-button *ngIf="!isDefault" expand="block" shape="round" class="set-btn" (click)="setAsDefault()">
+        <ion-icon name="star-outline" slot="start"></ion-icon>
+        Establecer como predeterminada
+      </ion-button>
+
+    </div>
+
+  </ng-container>
+
+</ion-content>

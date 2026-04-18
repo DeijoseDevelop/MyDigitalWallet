@@ -1,33 +1,36 @@
 import { Injectable } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { Dialog } from '@capacitor/dialog';
 
 @Injectable({ providedIn: 'root' })
 export class DialogService {
 
-  constructor(private alertCtrl: AlertController) {}
+  async confirm(title: string, message: string): Promise<boolean> {
+    const { value } = await Dialog.confirm({
+      title,
+      message,
+      okButtonTitle: 'Aceptar',
+      cancelButtonTitle: 'Cancelar',
+    });
+    return value;
+  }
 
-  confirm(header: string, message: string): Promise<boolean> {
-    return new Promise(async resolve => {
-      const alert = await this.alertCtrl.create({
-        header,
-        message,
-        buttons: [
-          { text: 'Cancelar', role: 'cancel', handler: () => resolve(false) },
-          { text: 'Aceptar',  role: 'confirm', handler: () => resolve(true) }
-        ]
-      });
-      await alert.present();
+  async alert(title: string, message: string): Promise<void> {
+    await Dialog.alert({
+      title,
+      message,
+      buttonTitle: 'OK',
     });
   }
 
-  alert(header: string, message: string): Promise<void> {
-    return new Promise(async resolve => {
-      const alert = await this.alertCtrl.create({
-        header,
-        message,
-        buttons: [{ text: 'OK', handler: () => resolve() }]
-      });
-      await alert.present();
+  async prompt(title: string, message: string, inputPlaceholder = ''): Promise<string | null> {
+    const { value, cancelled } = await Dialog.prompt({
+      title,
+      message,
+      inputPlaceholder,
+      inputText: '',
+      okButtonTitle: 'Confirmar',
+      cancelButtonTitle: 'Cancelar',
     });
+    return cancelled ? null : (value || null);
   }
 }

@@ -4,17 +4,8 @@
   align-items: center;
   padding: 8px 16px;
 
-  .greeting-sub {
-    font-size: 13px;
-    color: var(--ion-color-medium);
-    margin: 0;
-  }
-
-  .greeting-name {
-    font-size: 18px;
-    font-weight: 700;
-    margin: 2px 0 0;
-  }
+  .greeting-sub  { font-size: 13px; color: var(--ion-color-medium); margin: 0; }
+  .greeting-name { font-size: 18px; font-weight: 700; margin: 2px 0 0; }
 }
 
 .home-content {
@@ -34,11 +25,7 @@
   align-items: center;
   margin-bottom: 12px;
 
-  h3 {
-    font-size: 16px;
-    font-weight: 700;
-    margin: 0;
-  }
+  h3 { font-size: 16px; font-weight: 700; margin: 0; }
 }
 
 .empty-cards {
@@ -52,14 +39,8 @@
   cursor: pointer;
   border: 2px dashed var(--ion-color-light-shade);
 
-  ion-icon {
-    font-size: 40px;
-    margin-bottom: 8px;
-  }
-
-  p {
-    font-size: 14px;
-  }
+  ion-icon { font-size: 40px; margin-bottom: 8px; }
+  p        { font-size: 14px; }
 }
 
 .section-transactions {
@@ -71,6 +52,7 @@
   width: 100%;
   user-select: none;
   touch-action: pan-y;
+  overflow: visible;
 
   .stack-item {
     position: absolute;
@@ -85,13 +67,8 @@
     }
 
     &:not(.is-top) {
-      transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-        opacity 0.3s ease;
-    }
-
-    &.is-animating {
-      transition: transform 0.28s cubic-bezier(0.55, 0, 1, 0.45),
-        opacity 0.28s ease;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  opacity   0.35s ease;
     }
   }
 }

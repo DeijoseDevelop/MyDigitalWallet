@@ -46,7 +46,10 @@
               (click)="paymentForm.get('cardId')?.setValue(card.id)">
               <ion-icon [name]="card.type === 'visa' ? 'card-outline' : 'card'"></ion-icon>
               <div class="card-info">
-                <span class="card-type">{{ card.type | uppercase }}</span>
+                <span class="card-type">
+                  {{ card.type | uppercase }}
+                  <span *ngIf="card.id === defaultCardId" class="default-tag">★ Default</span>
+                </span>
                 <span class="card-num">•••• {{ card.cardNumber }}</span>
               </div>
               <ion-icon *ngIf="paymentForm.get('cardId')?.value === card.id" name="checkmark-circle"

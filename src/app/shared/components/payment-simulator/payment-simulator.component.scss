@@ -1,15 +1,16 @@
 .simulator-container {
-  padding: 20px;
+  padding: 8px 20px 32px;
   background: var(--ion-background-color);
-  border-radius: 24px 24px 0 0;
-  min-height: 60vh;
+  min-height: 100%;
 
   .simulator-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-bottom: 20px;
-    h2 { font-size: 20px; font-weight: 700; margin: 0; }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0;
+    }
   }
 
   .section {
@@ -46,23 +47,45 @@
         background: rgba(var(--ion-color-primary-rgb), 0.08);
       }
 
-      ion-icon { font-size: 22px; color: var(--ion-color-primary); }
+      ion-icon {
+        font-size: 22px;
+        color: var(--ion-color-primary);
+      }
 
       .card-option-info {
         flex: 1;
-        .card-type  { font-size: 10px; font-weight: 700; color: var(--ion-color-medium); display: block; }
-        .card-last4 { font-size: 14px; font-weight: 600; }
+
+        .card-type {
+          font-size: 10px;
+          font-weight: 700;
+          color: var(--ion-color-medium);
+          display: block;
+        }
+
+        .card-last4 {
+          font-size: 14px;
+          font-weight: 600;
+        }
       }
 
-      .check-icon { color: var(--ion-color-primary); }
+      .check-icon {
+        color: var(--ion-color-primary);
+      }
     }
 
     .no-cards {
       text-align: center;
       padding: 20px;
       color: var(--ion-color-medium);
-      ion-icon { font-size: 32px; }
-      p { font-size: 13px; margin-top: 6px; }
+
+      ion-icon {
+        font-size: 32px;
+      }
+
+      p {
+        font-size: 13px;
+        margin-top: 6px;
+      }
     }
   }
 
@@ -82,7 +105,10 @@
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
-      ion-icon { font-size: 14px; }
+
+      ion-icon {
+        font-size: 14px;
+      }
     }
   }
 
@@ -109,10 +135,30 @@
         background: rgba(var(--ion-color-primary-rgb), 0.08);
       }
 
-      .merchant-emoji   { font-size: 22px; margin-bottom: 4px; }
-      .merchant-name    { font-size: 13px; font-weight: 700; color: var(--ion-text-color); line-height: 1.2; }
-      .merchant-amount  { font-size: 14px; font-weight: 800; color: var(--ion-color-primary); margin-top: 4px; }
-      .merchant-category { font-size: 10px; color: var(--ion-color-medium); font-weight: 500; }
+      .merchant-emoji {
+        font-size: 22px;
+        margin-bottom: 4px;
+      }
+
+      .merchant-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--ion-text-color);
+        line-height: 1.2;
+      }
+
+      .merchant-amount {
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--ion-color-primary);
+        margin-top: 4px;
+      }
+
+      .merchant-category {
+        font-size: 10px;
+        color: var(--ion-color-medium);
+        font-weight: 500;
+      }
     }
   }
 
@@ -128,13 +174,32 @@
       align-items: center;
       padding: 4px 0;
 
-      &:not(:last-child) { border-bottom: 1px solid var(--ion-color-light-shade); padding-bottom: 8px; margin-bottom: 8px; }
+      &:not(:last-child) {
+        border-bottom: 1px solid var(--ion-color-light-shade);
+        padding-bottom: 8px;
+        margin-bottom: 8px;
+      }
 
-      .summary-label { font-size: 12px; color: var(--ion-color-medium); font-weight: 500; }
-      .summary-value { font-size: 14px; font-weight: 600; }
-      .summary-value.amount { color: var(--ion-color-primary); font-size: 16px; font-weight: 800; }
+      .summary-label {
+        font-size: 12px;
+        color: var(--ion-color-medium);
+        font-weight: 500;
+      }
+
+      .summary-value {
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .summary-value.amount {
+        color: var(--ion-color-primary);
+        font-size: 16px;
+        font-weight: 800;
+      }
     }
   }
 
-  .pay-btn { margin-top: 4px; }
+  .pay-btn {
+    margin-top: 4px;
+  }
 }

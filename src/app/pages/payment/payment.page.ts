@@ -26,14 +26,16 @@ export class PaymentPage implements OnInit {
   cards: Card[] = [];
   transactions: Transaction[] = [];
   categories = CATEGORIES;
-  loading     = true;
-  loadingTx   = true;
+  loading = true;
+  loadingTx = true;
 
   filteredTransactions: Transaction[] = [];
-  filterDate:     Date | null = null;
-  filterCategory  = '';
-  filterCardId    = '';
-  activeSegment   = 'pay';
+  filterDate: Date | null = null;
+  filterCategory = '';
+  filterCardId = '';
+  activeSegment = 'pay';
+
+  defaultCardId = '';
 
   constructor(
     private fb: FormBuilder,
@@ -47,10 +49,10 @@ export class PaymentPage implements OnInit {
     private userService: UserService
   ) {
     this.paymentForm = this.fb.group({
-      cardId:      ['', Validators.required],
-      amount:      [null, [Validators.required, Validators.min(1)]],
+      cardId: ['', Validators.required],
+      amount: [null, [Validators.required, Validators.min(1)]],
       description: ['', Validators.required],
-      category:    ['', Validators.required],
+      category: ['', Validators.required],
     });
   }
 
@@ -73,18 +75,28 @@ export class PaymentPage implements OnInit {
 
   async loadCards() {
     this.loading = true;
-    this.cards   = await this.cardService.getCards();
+    this.cards = await this.cardService.getCards();
+
     if (this.cards.length > 0) {
-      this.paymentForm.get('cardId')?.setValue(this.cards[0].id);
+      const user = await this.userService.getUserData();
+      this.defaultCardId = user?.defaultCardId ?? '';
+      const defaultCard = this.defaultCardId
+        ? this.cards.find(c => c.id === this.defaultCardId)
+        : null;
+
+      this.paymentForm.get('cardId')?.setValue(
+        defaultCard?.id ?? this.cards[0].id
+      );
     }
+
     this.loading = false;
   }
 
   async loadTransactions() {
-    this.loadingTx    = true;
+    this.loadingTx = true;
     this.transactions = await this.paymentService.getTransactions();
     this.applyFilters();
-    this.loadingTx    = false;
+    this.loadingTx = false;
   }
 
   get selectedCard(): Card | undefined {
@@ -110,9 +122,9 @@ export class PaymentPage implements OnInit {
 
   clearAllFilters() {
     Haptics.impact({ style: ImpactStyle.Medium });
-    this.filterDate     = null;
+    this.filterDate = null;
     this.filterCategory = '';
-    this.filterCardId   = '';
+    this.filterCardId = '';
     this.applyFilters();
   }
 

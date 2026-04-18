@@ -31,6 +31,10 @@
           <ion-icon name="add-outline" slot="start"></ion-icon>
           Agregar
         </ion-button>
+        <ion-button fill="clear" size="small" (click)="goToDefault()">
+          <ion-icon name="star-outline" slot="start"></ion-icon>
+          Default
+        </ion-button>
       </div>
 
       <app-skeleton-loading *ngIf="loading" type="card"></app-skeleton-loading>
@@ -43,8 +47,8 @@
 
         <div *ngIf="orderedCards.length > 0" class="wallet-stack" [style.height.px]="stackHeight"
           (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd($event)">
-          <div *ngFor="let card of orderedCards; let i = index" class="stack-item" [class.is-top]="i === 0"
-            [class.is-animating]="isAnimating" [style.transform]="getTransform(i)" [style.z-index]="getZIndex(i)"
+          <div *ngFor="let card of orderedCards; let i = index; trackBy: trackCard" class="stack-item"
+            [class.is-top]="i === 0" [style.transform]="getTransform(i)" [style.z-index]="getZIndex(i)"
             [style.opacity]="getOpacity(i)">
             <app-card [card]="card"></app-card>
           </div>

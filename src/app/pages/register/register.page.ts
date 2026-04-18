@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoadingController, ToastController } from '@ionic/angular';
+import { LoadingController } from '@ionic/angular';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { FirestoreService } from 'src/app/core/services/firestore.service';
+import { ToastService } from 'src/app/core/services/toast.service';
 
 @Component({
   selector: 'app-register',
@@ -21,7 +22,7 @@ export class RegisterPage implements OnInit {
     private firestoreService: FirestoreService,
     private router: Router,
     private loadingCtrl: LoadingController,
-    private toastCtrl: ToastController
+    private toastService: ToastService
   ) { }
 
   ngOnInit() {
@@ -38,7 +39,7 @@ export class RegisterPage implements OnInit {
 
   async onRegister() {
     if (this.registerForm.invalid) {
-      this.showToast('Por favor, completa todos los campos correctamente.');
+      await this.toastService.error('Por favor, completa todos los campos correctamente.');
       return;
     }
 
@@ -58,21 +59,12 @@ export class RegisterPage implements OnInit {
         createdAt: new Date()
       });
 
-      this.showToast('Registro exitoso', 'success');
+      await this.toastService.success('Registro exitoso');
       this.router.navigateByUrl('/home', { replaceUrl: true });
     } catch (error: any) {
-      this.showToast(error.message || 'Error en el registro');
+      await this.toastService.error(error.message || 'Error en el registro');
     } finally {
       loading.dismiss();
     }
-  }
-
-  async showToast(msg: string, color: string = 'danger') {
-    const toast = await this.toastCtrl.create({
-      message: msg,
-      duration: 3000,
-      color: color
-    });
-    toast.present();
   }
 }
