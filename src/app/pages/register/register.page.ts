@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoadingController, ToastController } from '@ionic/angular';
-import { AuthService } from 'src/app/core/services/auth';
-import { FirestoreService } from 'src/app/core/services/firestore';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { FirestoreService } from 'src/app/core/services/firestore.service';
 
 @Component({
   selector: 'app-register',
@@ -52,7 +52,7 @@ export class RegisterPage implements OnInit {
       await this.firestoreService.createDocument('users', userCredential.user.uid, {
         email,
         ...userData,
-        balance: 0, // Balance inicial por defecto
+        balance: 0,
         biometryEnabled: false,
         createdAt: new Date()
       });

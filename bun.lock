@@ -26,6 +26,7 @@
         "@ionic/angular": "^8.0.0",
         "animejs": "^4.3.6",
         "capacitor-native-biometric": "^4.2.2",
+        "capacitor-secure-storage-plugin": "^0.13.0",
         "firebase": "^12.12.0",
         "ionicons": "^7.0.0",
         "rxjs": "~7.8.0",
@@ -1090,6 +1091,8 @@
     "caniuse-lite": ["caniuse-lite@1.0.30001788", "", {}, "sha512-6q8HFp+lOQtcf7wBK+uEenxymVWkGKkjFpCvw5W25cmMwEDU45p1xQFBQv8JDlMMry7eNxyBaR+qxgmTUZkIRQ=="],
 
     "capacitor-native-biometric": ["capacitor-native-biometric@4.2.2", "", { "dependencies": { "@capacitor/core": "^3.4.3" } }, "sha512-stg0h48UxgkNuNcCAgCXLp2DUspRQs79bCBPntpCBhsDxk2bhDRUu+J/QpFtDQHG4M4DioSUcYaAsVw2N6N7wA=="],
+
+    "capacitor-secure-storage-plugin": ["capacitor-secure-storage-plugin@0.13.0", "", { "peerDependencies": { "@capacitor/core": ">=8.0.0" } }, "sha512-+rLC/9Z0LTaRRt6L6HjBwcDh5gqgI3NPmDSwo4hk41XQOy3EBrRo81VleIqFsowsMA3oMT+E59Bl8/HiWk0nhQ=="],
 
     "chalk": ["chalk@4.1.2", "", { "dependencies": { "ansi-styles": "^4.1.0", "supports-color": "^7.1.0" } }, "sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA=="],
 
