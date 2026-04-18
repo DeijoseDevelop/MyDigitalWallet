@@ -5,9 +5,9 @@
         <p class="greeting-sub">Bienvenido 👋</p>
         <h2 class="greeting-name">{{ user?.nombre }} {{ user?.apellido }}</h2>
       </div>
-      <ion-button fill="clear" (click)="onLogout()">
-        <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
-      </ion-button>
+      <button class="avatar-btn" (click)="goToProfile()">
+        <span>{{ user?.nombre?.charAt(0) }}{{ user?.apellido?.charAt(0) }}</span>
+      </button>
     </div>
   </ion-toolbar>
 </ion-header>
@@ -41,23 +41,11 @@
           <p>Agrega tu primera tarjeta</p>
         </div>
 
-        <div
-          *ngIf="orderedCards.length > 0"
-          class="wallet-stack"
-          [style.height.px]="stackHeight"
-          (touchstart)="onTouchStart($event)"
-          (touchmove)="onTouchMove($event)"
-          (touchend)="onTouchEnd($event)"
-        >
-          <div
-            *ngFor="let card of orderedCards; let i = index"
-            class="stack-item"
-            [class.is-top]="i === 0"
-            [class.is-animating]="isAnimating"
-            [style.transform]="getTransform(i)"
-            [style.z-index]="getZIndex(i)"
-            [style.opacity]="getOpacity(i)"
-          >
+        <div *ngIf="orderedCards.length > 0" class="wallet-stack" [style.height.px]="stackHeight"
+          (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd($event)">
+          <div *ngFor="let card of orderedCards; let i = index" class="stack-item" [class.is-top]="i === 0"
+            [class.is-animating]="isAnimating" [style.transform]="getTransform(i)" [style.z-index]="getZIndex(i)"
+            [style.opacity]="getOpacity(i)">
             <app-card [card]="card"></app-card>
           </div>
         </div>

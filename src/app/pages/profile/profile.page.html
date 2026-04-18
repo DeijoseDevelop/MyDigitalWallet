@@ -1,0 +1,94 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mi Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="profile-content">
+
+  <!-- Avatar y nombre -->
+  <div class="profile-hero">
+    <div class="avatar">
+      <span>{{ user?.nombre?.charAt(0) }}{{ user?.apellido?.charAt(0) }}</span>
+    </div>
+    <h2>{{ user?.nombre }} {{ user?.apellido }}</h2>
+    <p class="email">{{ user?.email }}</p>
+    <div class="balance-badge">
+      <ion-icon name="wallet-outline"></ion-icon>
+      <span>{{ user?.balance | currency:'COP':'symbol':'1.0-0' }}</span>
+    </div>
+  </div>
+
+  <!-- Info personal -->
+  <div class="section-card">
+    <h3 class="section-title">Información Personal</h3>
+
+    <div class="info-row">
+      <ion-icon name="document-outline"></ion-icon>
+      <div class="info-content">
+        <span class="info-label">{{ user?.tipoDocumento }}</span>
+        <span class="info-value">{{ user?.numeroDocumento }}</span>
+      </div>
+    </div>
+
+    <div class="info-row">
+      <ion-icon name="globe-outline"></ion-icon>
+      <div class="info-content">
+        <span class="info-label">País</span>
+        <span class="info-value">{{ user?.pais }}</span>
+      </div>
+    </div>
+
+    <div class="info-row">
+      <ion-icon name="mail-outline"></ion-icon>
+      <div class="info-content">
+        <span class="info-label">Correo</span>
+        <span class="info-value">{{ user?.email }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seguridad -->
+  <div class="section-card">
+    <h3 class="section-title">Seguridad</h3>
+
+    <div class="toggle-row" *ngIf="biometricAvailable">
+      <div class="toggle-info">
+        <ion-icon name="finger-print-outline" class="toggle-icon"></ion-icon>
+        <div>
+          <span class="toggle-label">Acceso biométrico</span>
+          <span class="toggle-desc">
+            {{ user?.biometryEnabled
+              ? 'Activo — usa tu huella para ingresar y pagar'
+              : 'Inactivo — activa para acceso rápido y seguro' }}
+          </span>
+        </div>
+      </div>
+      <ion-toggle
+        [checked]="user?.biometryEnabled"
+        (ionChange)="onToggleBiometric()"
+        color="primary"
+      ></ion-toggle>
+    </div>
+
+    <div class="info-row" *ngIf="!biometricAvailable">
+      <ion-icon name="warning-outline" color="warning"></ion-icon>
+      <div class="info-content">
+        <span class="info-label">Biometría</span>
+        <span class="info-value">No disponible en este dispositivo</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cerrar sesión -->
+  <div class="section-card">
+    <button class="logout-btn" (click)="onLogout()">
+      <ion-icon name="log-out-outline"></ion-icon>
+      Cerrar sesión
+    </button>
+  </div>
+
+</ion-content>

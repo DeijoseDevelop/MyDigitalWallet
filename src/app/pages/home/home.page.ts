@@ -320,4 +320,8 @@ export class HomePage implements OnInit, AfterViewInit {
   goToPayment() {
     this.router.navigateByUrl('/payment');
   }
+
+  goToProfile() {
+    this.router.navigateByUrl('/profile');
+  }
 }
