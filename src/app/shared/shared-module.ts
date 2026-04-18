@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+
 import { TransactionListComponent } from './components/transaction-list/transaction-list.component';
 import { TransactionItemComponent } from './components/transaction-item/transaction-item.component';
 import { BalanceDisplayComponent } from './components/balance-display/balance-display.component';
@@ -25,22 +27,21 @@ const COMPONENTS = [
 ];
 
 @NgModule({
-  declarations: [
-    ...COMPONENTS
-  ],
+  declarations: [...COMPONENTS],
   imports: [
     CommonModule,
     IonicModule,
     FormsModule,
     ReactiveFormsModule,
+    PickerModule,
   ],
   exports: [
     CommonModule,
     IonicModule,
     FormsModule,
     ReactiveFormsModule,
-
+    PickerModule,
     ...COMPONENTS,
   ]
 })
-export class SharedModule { }
+export class SharedModule {}

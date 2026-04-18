@@ -3,107 +3,139 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>Realizar Pago</ion-title>
+    <ion-title>Pagos</ion-title>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="activeSegment" (ionChange)="onSegmentChange()">
+      <ion-segment-button value="pay">
+        <ion-label>Pagar</ion-label>
+        <ion-icon name="card-outline"></ion-icon>
+      </ion-segment-button>
+      <ion-segment-button value="history">
+        <ion-label>Historial</ion-label>
+        <ion-icon name="calendar-outline"></ion-icon>
+      </ion-segment-button>
+    </ion-segment>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
 
-  <app-skeleton-loading *ngIf="loading" type="card"></app-skeleton-loading>
+  <!-- SEGMENTO: PAGAR -->
+  <div *ngIf="activeSegment === 'pay'">
 
-  <ng-container *ngIf="!loading">
+    <app-skeleton-loading *ngIf="loading" type="card"></app-skeleton-loading>
 
-    <div *ngIf="cards.length === 0" class="no-cards-msg">
-      <ion-icon name="card-outline"></ion-icon>
-      <p>No tienes tarjetas registradas.</p>
-      <ion-button routerLink="/add-card" shape="round" size="small">
-        Agregar tarjeta
-      </ion-button>
-    </div>
+    <ng-container *ngIf="!loading">
 
-    <form *ngIf="cards.length > 0" [formGroup]="paymentForm">
+      <div *ngIf="cards.length === 0" class="no-cards-msg">
+        <ion-icon name="card-outline"></ion-icon>
+        <p>No tienes tarjetas registradas.</p>
+        <ion-button routerLink="/add-card" shape="round" size="small">
+          Agregar tarjeta
+        </ion-button>
+      </div>
 
-      <div class="form-group">
-        <label class="form-label">Tarjeta</label>
-        <div class="card-list">
-          <div
-            *ngFor="let card of cards"
-            class="card-option"
-            [class.active]="paymentForm.get('cardId')?.value === card.id"
-            (click)="paymentForm.get('cardId')?.setValue(card.id)"
-          >
-            <ion-icon [name]="card.type === 'visa' ? 'card-outline' : 'card'"></ion-icon>
-            <div class="card-info">
-              <span class="card-type">{{ card.type | uppercase }}</span>
-              <span class="card-num">•••• {{ card.cardNumber }}</span>
+      <form *ngIf="cards.length > 0" [formGroup]="paymentForm">
+
+        <div class="form-group">
+          <label class="form-label">Tarjeta</label>
+          <div class="card-list">
+            <div
+              *ngFor="let card of cards"
+              class="card-option"
+              [class.active]="paymentForm.get('cardId')?.value === card.id"
+              (click)="paymentForm.get('cardId')?.setValue(card.id)"
+            >
+              <ion-icon [name]="card.type === 'visa' ? 'card-outline' : 'card'"></ion-icon>
+              <div class="card-info">
+                <span class="card-type">{{ card.type | uppercase }}</span>
+                <span class="card-num">•••• {{ card.cardNumber }}</span>
+              </div>
+              <ion-icon
+                *ngIf="paymentForm.get('cardId')?.value === card.id"
+                name="checkmark-circle"
+                class="check"
+              ></ion-icon>
             </div>
-            <ion-icon
-              *ngIf="paymentForm.get('cardId')?.value === card.id"
-              name="checkmark-circle"
-              class="check"
-            ></ion-icon>
           </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label class="form-label">Monto</label>
-        <div class="amount-wrapper">
-          <span class="currency">$</span>
+        <div class="form-group">
+          <label class="form-label">Monto</label>
+          <div class="amount-wrapper">
+            <span class="currency">$</span>
+            <input
+              type="number"
+              class="amount-input"
+              placeholder="0"
+              formControlName="amount"
+              min="1"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Descripción</label>
           <input
-            type="number"
-            class="amount-input"
-            placeholder="0"
-            formControlName="amount"
-            min="1"
+            type="text"
+            class="form-input"
+            placeholder="Ej: Almuerzo, Uber, Netflix..."
+            formControlName="description"
+            maxlength="60"
           />
         </div>
-      </div>
 
-      <div class="form-group">
-        <label class="form-label">Descripción</label>
-        <input
-          type="text"
-          class="form-input"
-          placeholder="Ej: Almuerzo, Uber, Netflix..."
-          formControlName="description"
-          maxlength="60"
-        />
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Categoría</label>
-        <div class="category-chips">
-          <button
-            *ngFor="let cat of categories"
-            type="button"
-            class="chip"
-            [class.active]="paymentForm.get('category')?.value === cat"
-            (click)="paymentForm.get('category')?.setValue(cat)"
-          >
-            {{ cat }}
-          </button>
+        <div class="form-group">
+          <label class="form-label">Categoría</label>
+          <div class="category-chips">
+            <button
+              *ngFor="let cat of categories"
+              type="button"
+              class="chip"
+              [class.active]="paymentForm.get('category')?.value === cat"
+              (click)="paymentForm.get('category')?.setValue(cat)"
+            >
+              {{ cat }}
+            </button>
+          </div>
         </div>
-      </div>
 
-      <ion-button
-        expand="block"
-        shape="round"
-        [disabled]="paymentForm.invalid"
-        (click)="onPay()"
-      >
-        <ion-icon name="checkmark-outline" slot="start"></ion-icon>
-        Confirmar Pago
-      </ion-button>
+        <ion-button
+          expand="block"
+          shape="round"
+          [disabled]="paymentForm.invalid"
+          (click)="onPay()"
+        >
+          <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+          Confirmar Pago
+        </ion-button>
 
-    </form>
+      </form>
+    </ng-container>
+  </div>
 
-  </ng-container>
+  <!-- SEGMENTO: HISTORIAL -->
+  <div *ngIf="activeSegment === 'history'">
 
-  <div class="tx-section">
-    <h3 class="tx-title">Historial</h3>
-    <app-skeleton-loading *ngIf="loadingTx" type="list" [lines]="3"></app-skeleton-loading>
-    <app-transaction-list *ngIf="!loadingTx" [transactions]="transactions"></app-transaction-list>
+    <app-calendar
+      (dateSelected)="onDateFilter($event)"
+      (emojiSelected)="onCategoryFilter($event)"
+    ></app-calendar>
+
+    <div class="tx-results">
+      <p class="tx-count" *ngIf="!loadingTx">
+        {{ filteredTransactions.length }} transacción(es)
+        <span *ngIf="filterDate || filterCategory"> encontrada(s)</span>
+      </p>
+      <app-skeleton-loading *ngIf="loadingTx" type="list" [lines]="3"></app-skeleton-loading>
+      <app-transaction-list
+        *ngIf="!loadingTx"
+        [transactions]="filteredTransactions"
+      ></app-transaction-list>
+    </div>
+
   </div>
 
 </ion-content>

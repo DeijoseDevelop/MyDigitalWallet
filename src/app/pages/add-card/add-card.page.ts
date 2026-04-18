@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CardService } from 'src/app/core/services/card.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { LoadingService } from 'src/app/core/services/loading.service';
+import { animate } from 'animejs';
+import { Haptics, NotificationType } from '@capacitor/haptics';
 
 @Component({
   selector: 'app-add-card',
@@ -12,6 +14,7 @@ import { LoadingService } from 'src/app/core/services/loading.service';
   standalone: false
 })
 export class AddCardPage {
+  @ViewChild('cardPreview') cardPreviewRef!: ElementRef;
 
   cardForm: FormGroup;
   cardColors = ['#1a1f71', '#0f172a', '#1a1a1a', '#064e3b', '#4c1d95'];
@@ -26,8 +29,30 @@ export class AddCardPage {
   ) {
     this.cardForm = this.fb.group({
       cardholderName: ['', Validators.required],
-      cardNumber:     ['', [Validators.required, Validators.minLength(16), Validators.maxLength(19)]],
-      expiryDate:     ['', [Validators.required, Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/)]],
+      cardNumber: ['', [Validators.required, Validators.minLength(16), Validators.maxLength(19)]],
+      expiryDate: ['', [Validators.required, Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/)]],
+    });
+  }
+
+  onCardNumberChange() {
+    this.animateCardFlip();
+  }
+
+  private animateCardFlip() {
+    const el = this.cardPreviewRef?.nativeElement;
+    if (!el) return;
+
+    animate(el, {
+      rotateY: ['0deg', '90deg'],
+      duration: 150,
+      ease: 'easeInQuad',
+      onComplete: () => {
+        animate(el, {
+          rotateY: ['90deg', '0deg'],
+          duration: 200,
+          ease: 'easeOutQuad',
+        });
+      }
     });
   }
 
@@ -71,15 +96,17 @@ export class AddCardPage {
     try {
       await this.cardService.addCard({
         cardholderName: this.cardForm.value.cardholderName,
-        cardNumber:     raw.slice(-4),
-        expiryDate:     this.cardForm.value.expiryDate,
-        type:           this.detectedType,
-        color:          this.selectedColor,
-        createdAt:      new Date()
+        cardNumber: raw.slice(-4),
+        expiryDate: this.cardForm.value.expiryDate,
+        type: this.detectedType,
+        color: this.selectedColor,
+        createdAt: new Date()
       });
+      await Haptics.notification({ type: NotificationType.Success });
       await this.toastService.success('Tarjeta agregada exitosamente.');
       this.router.navigateByUrl('/home', { replaceUrl: true });
     } catch (error: any) {
+      await Haptics.notification({ type: NotificationType.Error });
       await this.toastService.error(error.message || 'Error al guardar la tarjeta.');
     } finally {
       await this.loadingService.hide();

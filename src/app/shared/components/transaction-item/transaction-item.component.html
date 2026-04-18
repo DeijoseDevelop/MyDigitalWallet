@@ -1,12 +1,37 @@
-<div class="tx-item">
-  <div class="tx-icon">
-    <ion-icon [name]="getCategoryIcon(transaction.category)"></ion-icon>
+<div class="tx-item" [class.holding]="isHolding" (touchstart)="onPressStart($event)" (touchend)="onPressEnd()"
+  (touchcancel)="onPressEnd()" (mousedown)="onPressStart($event)" (mouseup)="onPressEnd()" (mouseleave)="onPressEnd()">
+  <div class="press-progress" *ngIf="isHolding">
+    <div class="press-bar" [style.width.%]="progress"></div>
   </div>
+
+  <div class="tx-icon">
+    <span *ngIf="emoji" class="tx-emoji">{{ emoji }}</span>
+    <ion-icon *ngIf="!emoji" [name]="getCategoryIcon(transaction.category)"></ion-icon>
+  </div>
+
   <div class="tx-info">
     <span class="tx-description">{{ transaction.description }}</span>
     <span class="tx-meta">{{ transaction.category }} · {{ getFormattedDate(transaction.date) }}</span>
   </div>
+
   <div class="tx-amount" [ngClass]="transaction.status">
     -{{ transaction.amount | currency:'COP':'symbol':'1.0-0' }}
+  </div>
+</div>
+
+<div *ngIf="showPicker" class="picker-overlay" (click)="showPicker = false">
+  <div class="picker-sheet" (click)="$event.stopPropagation()">
+
+    <div class="sheet-header">
+      <div class="sheet-handle"></div>
+      <p class="sheet-title">Reaccionar a esta transacción</p>
+      <p class="sheet-subtitle">{{ transaction.description }}</p>
+    </div>
+
+    <div class="picker-scroll">
+      <emoji-mart [darkMode]="false" [showPreview]="true" [enableSearch]="true" [isNative]="true" [perLine]="9"
+        [emojiSize]="28" title="Pick your emoji…" emoji="point_up" (emojiClick)="onEmojiSelect($event)"></emoji-mart>
+    </div>
+
   </div>
 </div>

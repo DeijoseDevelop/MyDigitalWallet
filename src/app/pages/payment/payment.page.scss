@@ -130,3 +130,15 @@
     margin-bottom: 8px;
   }
 }
+
+.tx-results {
+  margin-top: 16px;
+  padding-bottom: 32px;
+
+  .tx-count {
+    font-size: 13px;
+    color: var(--ion-color-medium);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+}

@@ -15,16 +15,16 @@
 <ion-content [fullscreen]="true" class="home-content">
   <div class="home-inner">
 
-    <section class="section-balance">
+    <section #balanceSection class="section-balance">
       <app-skeleton-loading *ngIf="loading" type="balance"></app-skeleton-loading>
       <app-balance-display *ngIf="!loading" [balance]="user?.balance ?? 0"></app-balance-display>
     </section>
 
-    <section>
+    <section #quickSection>
       <app-quick-actions (actionSelected)="onQuickAction($event)"></app-quick-actions>
     </section>
 
-    <section class="section-cards">
+    <section #cardsSection class="section-cards">
       <div class="section-header">
         <h3>Mis Tarjetas</h3>
         <ion-button fill="clear" size="small" (click)="goToAddCard()">
@@ -36,7 +36,6 @@
       <app-skeleton-loading *ngIf="loading" type="card"></app-skeleton-loading>
 
       <ng-container *ngIf="!loading">
-
         <div *ngIf="orderedCards.length === 0" class="empty-cards" (click)="goToAddCard()">
           <ion-icon name="card-outline"></ion-icon>
           <p>Agrega tu primera tarjeta</p>
@@ -62,11 +61,10 @@
             <app-card [card]="card"></app-card>
           </div>
         </div>
-
       </ng-container>
     </section>
 
-    <section class="section-transactions">
+    <section #txSection class="section-transactions">
       <app-skeleton-loading *ngIf="loading" type="list" [lines]="4"></app-skeleton-loading>
       <app-transaction-list *ngIf="!loading" [transactions]="transactions"></app-transaction-list>
     </section>

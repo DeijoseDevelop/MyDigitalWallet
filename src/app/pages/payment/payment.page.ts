@@ -6,6 +6,7 @@ import { NotificationService } from 'src/app/core/services/notification.service'
 import { ToastService } from 'src/app/core/services/toast.service';
 import { LoadingService } from 'src/app/core/services/loading.service';
 import { DialogService } from 'src/app/core/services/dialog.service';
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 
 export const CATEGORIES = [
   'Comida', 'Transporte', 'Servicios', 'Compras', 'Salud', 'Ocio'
@@ -26,6 +27,11 @@ export class PaymentPage implements OnInit {
   loading = true;
   loadingTx = true;
 
+  filteredTransactions: Transaction[] = [];
+  filterDate: Date | null = null;
+  filterCategory = '';
+  activeSegment = 'pay';
+
   constructor(
     private fb: FormBuilder,
     private cardService: CardService,
@@ -36,10 +42,10 @@ export class PaymentPage implements OnInit {
     private dialogService: DialogService
   ) {
     this.paymentForm = this.fb.group({
-      cardId:      ['', Validators.required],
-      amount:      [null, [Validators.required, Validators.min(1)]],
+      cardId: ['', Validators.required],
+      amount: [null, [Validators.required, Validators.min(1)]],
       description: ['', Validators.required],
-      category:    ['', Validators.required],
+      category: ['', Validators.required],
     });
   }
 
@@ -51,6 +57,13 @@ export class PaymentPage implements OnInit {
   async ionViewWillEnter() {
     await this.loadCards();
     await this.loadTransactions();
+  }
+
+  onSegmentChange() {
+    Haptics.impact({ style: ImpactStyle.Light });
+    if (this.activeSegment === 'history') {
+      this.loadTransactions();
+    }
   }
 
   async loadCards() {
@@ -65,6 +78,7 @@ export class PaymentPage implements OnInit {
   async loadTransactions() {
     this.loadingTx = true;
     this.transactions = await this.paymentService.getTransactions();
+    this.applyFilters();
     this.loadingTx = false;
   }
 
@@ -99,6 +113,8 @@ export class PaymentPage implements OnInit {
         category
       );
       await this.notificationService.sendPaymentNotification(amount);
+      await Haptics.notification({ type: NotificationType.Success });
+
       await this.toastService.success('¡Pago realizado con éxito!');
       this.paymentForm.reset();
       if (this.cards.length > 0) {
@@ -106,9 +122,41 @@ export class PaymentPage implements OnInit {
       }
       await this.loadTransactions();
     } catch (error: any) {
+      await Haptics.notification({ type: NotificationType.Error });
       await this.toastService.error(error.message || 'Error al procesar el pago.');
     } finally {
       await this.loadingService.hide();
     }
+  }
+
+
+
+  onDateFilter(date: Date | null) {
+    this.filterDate = date;
+    this.applyFilters();
+  }
+
+  onCategoryFilter(category: string) {
+    this.filterCategory = category;
+    this.applyFilters();
+  }
+
+  private applyFilters() {
+    let result = [...this.transactions];
+
+    if (this.filterDate) {
+      result = result.filter(tx => {
+        const txDate = tx.date?.toDate ? tx.date.toDate() : new Date(tx.date);
+        return txDate.toDateString() === this.filterDate!.toDateString();
+      });
+    }
+
+    if (this.filterCategory) {
+      result = result.filter(tx =>
+        tx.category.toLowerCase() === this.filterCategory.toLowerCase()
+      );
+    }
+
+    this.filteredTransactions = result;
   }
 }

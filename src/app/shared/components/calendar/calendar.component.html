@@ -1,4 +1,5 @@
-<div class="calendar">
+<div class="calendar-wrapper">
+
   <div class="cal-header">
     <ion-button fill="clear" size="small" (click)="prevMonth()">
       <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
@@ -11,18 +12,36 @@
 
   <div class="cal-grid">
     <div class="day-name" *ngFor="let name of dayNames">{{ name }}</div>
-
     <ng-container *ngFor="let week of weeks">
-      <div
-        *ngFor="let day of week"
-        class="day-cell"
-        [class.other-month]="!day.isCurrentMonth"
-        [class.today]="day.isToday"
-        [class.selected]="day.isSelected"
-        (click)="selectDay(day)"
-      >
+      <div *ngFor="let day of week" class="day-cell" [class.other-month]="!day.isCurrentMonth"
+        [class.today]="day.isToday" [class.selected]="day.isSelected" (click)="selectDay(day)">
         {{ day.date.getDate() }}
       </div>
     </ng-container>
   </div>
+
+  <div *ngIf="selectedDate || selectedCategory" class="active-filters">
+    <span *ngIf="selectedDate" class="filter-chip">
+      📅 {{ selectedDate | date:'dd MMM':'':'es' }}
+    </span>
+    <span *ngIf="selectedCategory" class="filter-chip">
+      {{ selectedEmoji }} {{ selectedCategory }}
+    </span>
+    <button class="clear-btn" (click)="clearFilters()">
+      <ion-icon name="close-circle-outline"></ion-icon>
+      Limpiar
+    </button>
+  </div>
+
+  <div class="category-section">
+    <p class="section-label">Filtrar por categoría</p>
+    <div class="category-chips">
+      <button *ngFor="let cat of categories" class="cat-chip" [class.active]="selectedCategory === cat"
+        (click)="selectCategory(cat)">
+        <span class="cat-emoji">{{ getCategoryEmoji(cat) }}</span>
+        <span class="cat-label">{{ cat }}</span>
+      </button>
+    </div>
+  </div>
+
 </div>

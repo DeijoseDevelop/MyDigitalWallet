@@ -9,7 +9,7 @@
 
 <ion-content class="ion-padding">
 
-  <div class="card-preview" [style.background]="selectedColor">
+  <div class="card-preview" #cardPreview [style.background]="selectedColor">
     <div class="card-preview-top">
       <span>MyDigitalWallet</span>
       <ion-icon [name]="detectedType === 'visa' ? 'card-outline' : 'card'"></ion-icon>
@@ -34,60 +34,32 @@
   </div>
 
   <div class="color-picker">
-    <div
-      *ngFor="let color of cardColors"
-      class="color-dot"
-      [style.background]="color"
-      [class.active]="selectedColor === color"
-      (click)="selectedColor = color"
-    ></div>
+    <div *ngFor="let color of cardColors" class="color-dot" [style.background]="color"
+      [class.active]="selectedColor === color" (click)="selectedColor = color"></div>
   </div>
 
   <form [formGroup]="cardForm">
 
     <div class="form-group">
       <label class="form-label">Nombre del titular</label>
-      <input
-        type="text"
-        class="form-input"
-        placeholder="Como aparece en la tarjeta"
-        formControlName="cardholderName"
-      />
+      <input type="text" class="form-input" placeholder="Como aparece en la tarjeta" formControlName="cardholderName" />
     </div>
 
     <div class="form-group">
       <label class="form-label">Número de tarjeta</label>
-      <input
-        type="tel"
-        class="form-input"
-        placeholder="0000 0000 0000 0000"
-        formControlName="cardNumber"
-        (input)="formatCardNumber($event)"
-        maxlength="19"
-      />
+      <input type="tel" class="form-input" placeholder="0000 0000 0000 0000" formControlName="cardNumber"
+        (input)="formatCardNumber($event)" maxlength="19" />
     </div>
 
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Fecha de vencimiento</label>
-        <input
-          type="tel"
-          class="form-input"
-          placeholder="MM/AA"
-          formControlName="expiryDate"
-          (input)="formatExpiry($event)"
-          maxlength="5"
-        />
+        <input type="tel" class="form-input" placeholder="0000 0000 0000 0000" formControlName="cardNumber"
+          (input)="formatCardNumber($event); onCardNumberChange()" maxlength="19" />
       </div>
     </div>
 
-    <ion-button
-      expand="block"
-      shape="round"
-      class="ion-margin-top"
-      [disabled]="cardForm.invalid"
-      (click)="onSubmit()"
-    >
+    <ion-button expand="block" shape="round" class="ion-margin-top" [disabled]="cardForm.invalid" (click)="onSubmit()">
       <ion-icon name="checkmark-outline" slot="start"></ion-icon>
       Guardar Tarjeta
     </ion-button>
