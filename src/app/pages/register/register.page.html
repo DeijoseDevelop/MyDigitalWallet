@@ -1,64 +1,121 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/login"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Crear Cuenta</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="register-content">
 
-<ion-content class="ion-padding">
-  <div class="header-text">
-    <h2>Únete a la billetera del futuro</h2>
-    <p>Completa tus datos para empezar a gestionar tu dinero.</p>
+  <div class="register-bg">
+    <div class="bg-circle bg-circle-1"></div>
+    <div class="bg-circle bg-circle-2"></div>
   </div>
 
-  <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
-    
-    <ion-item class="custom-input">
-      <ion-label position="floating">Nombre</ion-label>
-      <ion-input type="text" formControlName="nombre"></ion-input>
-    </ion-item>
+  <div class="register-container">
 
-    <ion-item class="custom-input">
-      <ion-label position="floating">Apellido</ion-label>
-      <ion-input type="text" formControlName="apellido"></ion-input>
-    </ion-item>
-
-    <ion-item class="custom-input">
-      <ion-label position="floating">Tipo de Documento</ion-label>
-      <ion-select formControlName="tipoDocumento" interface="popover">
-        <ion-select-option value="CC">Cédula de Ciudadanía</ion-select-option>
-        <ion-select-option value="CE">Cédula de Extranjería</ion-select-option>
-        <ion-select-option value="PA">Pasaporte</ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-item class="custom-input">
-      <ion-label position="floating">Número de Documento</ion-label>
-      <ion-input type="tel" formControlName="numeroDocumento"></ion-input>
-    </ion-item>
-
-    <ion-item class="custom-input">
-      <ion-label position="floating">País</ion-label>
-      <ion-input type="text" formControlName="pais"></ion-input>
-    </ion-item>
-
-    <ion-item class="custom-input">
-      <ion-label position="floating">Correo Electrónico</ion-label>
-      <ion-input type="email" formControlName="email"></ion-input>
-    </ion-item>
-
-    <ion-item class="custom-input">
-      <ion-label position="floating">Contraseña</ion-label>
-      <ion-input type="password" formControlName="password"></ion-input>
-    </ion-item>
-    <div *ngIf="registerForm.get('password')?.hasError('minlength')" class="error-text">
-      La contraseña debe tener mínimo 6 caracteres.
+    <div class="register-header">
+      <ion-button fill="clear" class="back-btn" routerLink="/login">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      <div class="header-text">
+        <h1>Crear Cuenta</h1>
+        <p>Únete a la billetera del futuro</p>
+      </div>
     </div>
 
-    <ion-button expand="block" shape="round" type="submit" [disabled]="registerForm.invalid" class="ion-margin-top">
-      Registrarme
-    </ion-button>
-  </form>
+    <div class="card-form">
+      <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Nombre</label>
+            <div class="input-wrapper">
+              <ion-icon name="person-outline" class="input-icon"></ion-icon>
+              <input type="text" class="form-input" placeholder="Nombre" formControlName="nombre" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Apellido</label>
+            <div class="input-wrapper">
+              <input type="text" class="form-input" placeholder="Apellido" formControlName="apellido" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tipo de Documento</label>
+          <div class="input-wrapper select-wrapper">
+            <ion-icon name="card-outline" class="input-icon"></ion-icon>
+            <ion-select
+              formControlName="tipoDocumento"
+              interface="popover"
+              placeholder="Selecciona"
+              class="form-select"
+            >
+              <ion-select-option value="CC">Cédula de Ciudadanía</ion-select-option>
+              <ion-select-option value="CE">Cédula de Extranjería</ion-select-option>
+              <ion-select-option value="PA">Pasaporte</ion-select-option>
+            </ion-select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Número de Documento</label>
+          <div class="input-wrapper">
+            <ion-icon name="document-outline" class="input-icon"></ion-icon>
+            <input type="tel" class="form-input" placeholder="Ej: 1234567890" formControlName="numeroDocumento" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">País</label>
+          <div class="input-wrapper">
+            <ion-icon name="globe-outline" class="input-icon"></ion-icon>
+            <input type="text" class="form-input" placeholder="Ej: Colombia" formControlName="pais" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Correo Electrónico</label>
+          <div class="input-wrapper">
+            <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+            <input type="email" class="form-input" placeholder="tucorreo@email.com" formControlName="email" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <div class="input-wrapper">
+            <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              class="form-input"
+              placeholder="Mínimo 6 caracteres"
+              formControlName="password"
+            />
+            <ion-icon
+              [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+              class="input-icon-right"
+              (click)="showPassword = !showPassword"
+            ></ion-icon>
+          </div>
+          <span
+            *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.hasError('minlength')"
+            class="error-msg"
+          >
+            La contraseña debe tener mínimo 6 caracteres.
+          </span>
+        </div>
+
+        <ion-button
+          expand="block"
+          type="submit"
+          class="btn-primary"
+          [disabled]="registerForm.invalid"
+        >
+          Crear Cuenta
+        </ion-button>
+
+      </form>
+    </div>
+
+    <div class="footer">
+      <p>¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a></p>
+    </div>
+
+  </div>
 </ion-content>

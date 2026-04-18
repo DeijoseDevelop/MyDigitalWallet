@@ -1,0 +1,216 @@
+.login-content {
+  --background: var(--ion-background-color);
+}
+
+.login-bg {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+
+  .bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.08;
+
+    &-1 {
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, var(--ion-color-primary), transparent);
+      top: -80px;
+      right: -80px;
+    }
+
+    &-2 {
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, #6366f1, transparent);
+      bottom: 120px;
+      left: -60px;
+    }
+
+    &-3 {
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle, var(--ion-color-primary), transparent);
+      bottom: -40px;
+      right: 40px;
+    }
+  }
+}
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 32px 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 36px;
+
+  .logo-wrapper {
+    width: 72px;
+    height: 72px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, var(--ion-color-primary), #6366f1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: 0 8px 32px rgba(var(--ion-color-primary-rgb), 0.35);
+
+    ion-icon {
+      font-size: 36px;
+      color: #fff;
+    }
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--ion-text-color);
+    margin: 0 0 6px;
+    letter-spacing: -0.5px;
+  }
+
+  p {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+    margin: 0;
+  }
+}
+
+.card-form {
+  background: var(--ion-card-background, var(--ion-item-background));
+  border: 1px solid var(--ion-color-light-shade);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.form-group {
+  margin-bottom: 16px;
+
+  .form-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ion-color-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .input-wrapper {
+    display: flex;
+    align-items: center;
+    background: var(--ion-color-light);
+    border: 1.5px solid transparent;
+    border-radius: 14px;
+    padding: 0 14px;
+    transition: border-color 0.2s, background 0.2s;
+
+    &:focus-within {
+      border-color: var(--ion-color-primary);
+      background: rgba(var(--ion-color-primary-rgb), 0.05);
+    }
+
+    .input-icon {
+      font-size: 18px;
+      color: var(--ion-color-medium);
+      flex-shrink: 0;
+      margin-right: 10px;
+    }
+
+    .input-icon-right {
+      font-size: 18px;
+      color: var(--ion-color-medium);
+      flex-shrink: 0;
+      margin-left: 8px;
+      cursor: pointer;
+    }
+
+    .form-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--ion-text-color);
+      font-size: 15px;
+      padding: 14px 0;
+
+      &::placeholder { color: var(--ion-color-medium-shade); }
+    }
+  }
+}
+
+.btn-primary {
+  --background: var(--ion-color-primary);
+  --background-activated: var(--ion-color-primary-shade);
+  --border-radius: 14px;
+  --box-shadow: 0 8px 24px rgba(var(--ion-color-primary-rgb), 0.35);
+  font-weight: 700;
+  font-size: 15px;
+  height: 52px;
+  margin: 20px 0 0;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--ion-color-light-shade);
+  }
+
+  .divider-text {
+    font-size: 12px;
+    color: var(--ion-color-medium);
+    font-weight: 600;
+  }
+}
+
+.btn-google {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--ion-color-light);
+  border: 1.5px solid var(--ion-color-light-shade);
+  border-radius: 14px;
+  padding: 14px;
+  color: var(--ion-text-color);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:active { background: var(--ion-color-light-shade); }
+}
+
+.footer {
+  text-align: center;
+  margin-top: 24px;
+
+  p {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+    margin: 0;
+  }
+
+  a {
+    color: var(--ion-color-primary);
+    font-weight: 600;
+    text-decoration: none;
+  }
+}

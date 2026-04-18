@@ -13,6 +13,7 @@ import { FirestoreService } from 'src/app/core/services/firestore.service';
 })
 export class RegisterPage implements OnInit {
   registerForm!: FormGroup;
+  showPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -21,7 +22,7 @@ export class RegisterPage implements OnInit {
     private router: Router,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.registerForm = this.fb.group({
@@ -48,7 +49,7 @@ export class RegisterPage implements OnInit {
 
     try {
       const userCredential = await this.authService.register(email, password);
-      
+
       await this.firestoreService.createDocument('users', userCredential.user.uid, {
         email,
         ...userData,

@@ -14,6 +14,8 @@ export class LoginPage {
   email = '';
   password = '';
 
+  showPassword = false;
+
   constructor(
     private authService: AuthService,
     private firestoreService: FirestoreService,
