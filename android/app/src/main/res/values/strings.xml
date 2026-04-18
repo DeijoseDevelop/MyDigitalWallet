@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">my-app-wallet</string>
+    <string name="title_activity_main">my-app-wallet</string>
+    <string name="package_name">com.mydigital.mydigitalWallet</string>
+    <string name="custom_url_scheme">com.mydigital.mydigitalWallet</string>
+</resources>
