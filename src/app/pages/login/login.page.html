@@ -22,13 +22,7 @@
         <label class="form-label">Correo electrónico</label>
         <div class="input-wrapper">
           <ion-icon name="mail-outline" class="input-icon"></ion-icon>
-          <input
-            type="email"
-            placeholder="tucorreo@email.com"
-            [(ngModel)]="email"
-            name="email"
-            class="form-input"
-          />
+          <input type="email" placeholder="tucorreo@email.com" [(ngModel)]="email" name="email" class="form-input" />
         </div>
       </div>
 
@@ -36,18 +30,10 @@
         <label class="form-label">Contraseña</label>
         <div class="input-wrapper">
           <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
-          <input
-            [type]="showPassword ? 'text' : 'password'"
-            placeholder="••••••••"
-            [(ngModel)]="password"
-            name="password"
-            class="form-input"
-          />
-          <ion-icon
-            [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
-            class="input-icon-right"
-            (click)="showPassword = !showPassword"
-          ></ion-icon>
+          <input [type]="showPassword ? 'text' : 'password'" placeholder="••••••••" [(ngModel)]="password"
+            name="password" class="form-input" />
+          <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" class="input-icon-right"
+            (click)="showPassword = !showPassword"></ion-icon>
         </div>
       </div>
 
@@ -60,6 +46,11 @@
         <span class="divider-text">O</span>
         <span class="divider-line"></span>
       </div>
+
+      <button *ngIf="showBiometricBtn" class="btn-biometric" (click)="onBiometricLogin()">
+        <ion-icon name="finger-print-outline"></ion-icon>
+        Iniciar con huella dactilar
+      </button>
 
       <button class="btn-google" (click)="onGoogleLogin()">
         <ion-icon name="logo-google" slot="start"></ion-icon>

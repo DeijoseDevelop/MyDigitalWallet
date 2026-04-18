@@ -7,6 +7,8 @@ import { ToastService } from 'src/app/core/services/toast.service';
 import { LoadingService } from 'src/app/core/services/loading.service';
 import { DialogService } from 'src/app/core/services/dialog.service';
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
+import { BiometricService } from 'src/app/core/services/biometric.service';
+import { UserService } from 'src/app/core/services/user.service';
 
 export const CATEGORIES = [
   'Comida', 'Transporte', 'Servicios', 'Compras', 'Salud', 'Ocio'
@@ -39,7 +41,9 @@ export class PaymentPage implements OnInit {
     private notificationService: NotificationService,
     private toastService: ToastService,
     private loadingService: LoadingService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private userService: UserService,
+    private biometricService: BiometricService,
   ) {
     this.paymentForm = this.fb.group({
       cardId: ['', Validators.required],
@@ -97,6 +101,19 @@ export class PaymentPage implements OnInit {
     const card = this.cards.find(c => c.id === cardId);
     if (!card) return;
 
+    // Verificar biometría si está habilitada
+    const userData = await this.userService.getUserData();
+    if (userData?.biometryEnabled) {
+      const available = await this.biometricService.isAvailable();
+      if (available) {
+        const verified = await this.biometricService.verify('Autoriza el pago con tu huella');
+        if (!verified) {
+          await this.toastService.error('Pago cancelado. Biometría no verificada.');
+          return;
+        }
+      }
+    }
+
     const confirmed = await this.dialogService.confirm(
       'Confirmar pago',
       `¿Pagar $${amount.toLocaleString('es-CO')} con tarjeta •••• ${card.cardNumber}?`
@@ -106,21 +123,13 @@ export class PaymentPage implements OnInit {
     await this.loadingService.show('Procesando pago...');
     try {
       await this.paymentService.processPayment(
-        cardId,
-        card.cardNumber,
-        amount,
-        description,
-        description, // merchant = description en payment manual
-        category
+        cardId, card.cardNumber, amount, description, description, category
       );
       await this.notificationService.sendPaymentNotification(amount);
       await Haptics.notification({ type: NotificationType.Success });
-
       await this.toastService.success('¡Pago realizado con éxito!');
       this.paymentForm.reset();
-      if (this.cards.length > 0) {
-        this.paymentForm.get('cardId')?.setValue(this.cards[0].id);
-      }
+      if (this.cards.length > 0) this.paymentForm.get('cardId')?.setValue(this.cards[0].id);
       await this.loadTransactions();
     } catch (error: any) {
       await Haptics.notification({ type: NotificationType.Error });
@@ -129,8 +138,6 @@ export class PaymentPage implements OnInit {
       await this.loadingService.hide();
     }
   }
-
-
 
   onDateFilter(date: Date | null) {
     this.filterDate = date;

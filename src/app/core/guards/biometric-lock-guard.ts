@@ -1,40 +1,26 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { getAuth } from 'firebase/auth';
-import { FirestoreService } from '../services/firestore';
-import { NativeBiometric } from 'capacitor-native-biometric';
-import { Platform } from '@ionic/angular';
+import { FirestoreService } from '../services/firestore.service';
+import { BiometricService } from '../services/biometric.service';
 
 export const biometricLockGuard: CanActivateFn = async () => {
   const router    = inject(Router);
   const firestore = inject(FirestoreService);
-  const platform  = inject(Platform);
+  const biometric = inject(BiometricService);
 
   const auth = getAuth();
   const user = auth.currentUser;
 
   if (!user) return router.createUrlTree(['/login']);
-
-  if (!platform.is('capacitor')) return true;
+  if (!biometric.isNative()) return true;
 
   const userData = await firestore.getDocument('users', user.uid);
   if (!userData?.biometryEnabled) return true;
 
-  try {
-    const result = await NativeBiometric.isAvailable();
-    if (!result.isAvailable) return true;
+  const available = await biometric.isAvailable();
+  if (!available) return true;
 
-    await NativeBiometric.verifyIdentity({
-      reason: 'Confirma tu identidad para continuar',
-      title: 'Autenticación Biométrica',
-      subtitle: 'MyDigitalWallet',
-      description: 'Usa tu huella o rostro para acceder',
-      negativeButtonText: 'Cancelar',
-      maxAttempts: 3,
-    });
-
-    return true;
-  } catch {
-    return router.createUrlTree(['/login']);
-  }
+  const verified = await biometric.verify('Confirma tu identidad para acceder');
+  return verified ? true : router.createUrlTree(['/login']);
 };

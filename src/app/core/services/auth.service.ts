@@ -8,6 +8,7 @@ import {
   signOut,
   linkWithCredential,
   EmailAuthProvider,
+  reauthenticateWithCredential,
 } from 'firebase/auth';
 import { GoogleSignIn } from '@capawesome/capacitor-google-sign-in';
 import { environment } from 'src/environments/environment';
@@ -71,6 +72,17 @@ export class AuthService {
 
   async register(email: string, password: string) {
     return await createUserWithEmailAndPassword(this.auth, email, password);
+  }
+
+  async loginWithBiometric(email: string, password: string) {
+    return await signInWithEmailAndPassword(this.auth, email, password);
+  }
+
+  async reauthenticate(password: string): Promise<void> {
+    const user = this.auth.currentUser;
+    if (!user || !user.email) throw new Error('No hay usuario autenticado');
+    const credential = EmailAuthProvider.credential(user.email, password);
+    await reauthenticateWithCredential(user, credential);
   }
 
   async login(email: string, password: string) {
