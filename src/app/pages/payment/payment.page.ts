@@ -110,6 +110,7 @@ export class PaymentPage implements OnInit {
         card.cardNumber,
         amount,
         description,
+        description, // merchant = description en payment manual
         category
       );
       await this.notificationService.sendPaymentNotification(amount);

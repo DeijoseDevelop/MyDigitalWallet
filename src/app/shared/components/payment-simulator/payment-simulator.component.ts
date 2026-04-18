@@ -1,14 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Card } from 'src/app/core/services/card.service';
-import { PaymentService } from 'src/app/core/services/payment.service';
+import { PaymentService, FakeMerchant } from 'src/app/core/services/payment.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { ModalService } from 'src/app/core/services/modal.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { LoadingService } from 'src/app/core/services/loading.service';
-
-export const CATEGORIES = [
-  'Comida', 'Transporte', 'Servicios', 'Compras', 'Salud', 'Ocio'
-];
 
 @Component({
   selector: 'app-payment-simulator',
@@ -20,10 +16,8 @@ export class PaymentSimulatorComponent implements OnInit {
   @Input() cards: Card[] = [];
 
   selectedCard: Card | null = null;
-  amount: number | null = null;
-  description = '';
-  category = '';
-  categories = CATEGORIES;
+  selectedMerchant: FakeMerchant | null = null;
+  merchants: FakeMerchant[] = [];
   processing = false;
 
   constructor(
@@ -35,40 +29,50 @@ export class PaymentSimulatorComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.cards.length > 0) {
-      this.selectedCard = this.cards[0];
-    }
+    if (this.cards.length > 0) this.selectedCard = this.cards[0];
+    this.refreshMerchants();
   }
 
-  selectCard(card: Card) {
-    this.selectedCard = card;
+  refreshMerchants() {
+    this.merchants        = this.paymentService.generateFakeMerchants(6);
+    this.selectedMerchant = null;
+  }
+
+  selectCard(card: Card) { this.selectedCard = card; }
+
+  selectMerchant(merchant: FakeMerchant) {
+    this.selectedMerchant = this.selectedMerchant?.name === merchant.name ? null : merchant;
   }
 
   isValid(): boolean {
-    return !!this.selectedCard
-      && !!this.amount
-      && this.amount > 0
-      && this.description.trim().length > 0
-      && this.category.length > 0;
+    return !!this.selectedCard && !!this.selectedMerchant;
+  }
+
+  getCategoryEmoji(category: string): string {
+    const map: Record<string, string> = {
+      'Comida': '🍔', 'Transporte': '🚗', 'Servicios': '⚡',
+      'Compras': '🛍️', 'Salud': '💊', 'Ocio': '🎮',
+    };
+    return map[category] ?? '💸';
   }
 
   async onPay() {
-    if (!this.isValid() || !this.selectedCard) return;
+    if (!this.isValid() || !this.selectedCard || !this.selectedMerchant) return;
 
     await this.loadingService.show('Procesando pago...');
-
     try {
       await this.paymentService.processPayment(
         this.selectedCard.id!,
         this.selectedCard.cardNumber,
-        this.amount!,
-        this.description.trim(),
-        this.category
+        this.selectedMerchant.amount,
+        this.selectedMerchant.name,
+        this.selectedMerchant.name,
+        this.selectedMerchant.category
       );
 
-      await this.notificationService.sendPaymentNotification(this.amount!);
+      await this.notificationService.sendPaymentNotification(this.selectedMerchant.amount);
       await this.toastService.success('¡Pago realizado con éxito!');
-      await this.modalService.close({ success: true, amount: this.amount }, 'confirm');
+      await this.modalService.close({ success: true, amount: this.selectedMerchant.amount }, 'confirm');
     } catch (error: any) {
       await this.toastService.error(error.message || 'Error al procesar el pago');
     } finally {

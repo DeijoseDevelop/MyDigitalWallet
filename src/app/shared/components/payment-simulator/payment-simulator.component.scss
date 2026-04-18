@@ -9,24 +9,19 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-
-    h2 {
-      font-size: 20px;
-      font-weight: 700;
-      margin: 0;
-    }
+    h2 { font-size: 20px; font-weight: 700; margin: 0; }
   }
 
   .section {
     margin-bottom: 20px;
 
     .section-label {
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 12px;
+      font-weight: 700;
       color: var(--ion-color-medium);
-      margin: 0 0 10px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      margin: 0 0 10px;
     }
   }
 
@@ -44,7 +39,7 @@
       background: var(--ion-color-light);
       border: 2px solid transparent;
       cursor: pointer;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
 
       &.active {
         border-color: var(--ion-color-primary);
@@ -55,93 +50,91 @@
 
       .card-option-info {
         flex: 1;
-        display: flex;
-        flex-direction: column;
-        .card-type { font-size: 11px; font-weight: 700; color: var(--ion-color-medium); }
+        .card-type  { font-size: 10px; font-weight: 700; color: var(--ion-color-medium); display: block; }
         .card-last4 { font-size: 14px; font-weight: 600; }
       }
 
-      .check-icon { color: var(--ion-color-primary); font-size: 20px; }
+      .check-icon { color: var(--ion-color-primary); }
     }
 
     .no-cards {
       text-align: center;
-      padding: 24px;
+      padding: 20px;
       color: var(--ion-color-medium);
-      ion-icon { font-size: 36px; }
-      p { font-size: 14px; margin-top: 8px; }
+      ion-icon { font-size: 32px; }
+      p { font-size: 13px; margin-top: 6px; }
     }
   }
 
-  .amount-input-wrapper {
+  .merchant-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    background: var(--ion-color-light);
-    border-radius: 12px;
-    padding: 4px 16px;
-    border: 1.5px solid transparent;
+    margin-bottom: 10px;
 
-    &:focus-within { border-color: var(--ion-color-primary); }
-
-    .currency {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--ion-color-medium);
-      margin-right: 8px;
-    }
-
-    .amount-input {
-      flex: 1;
+    .refresh-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
       border: none;
-      background: transparent;
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--ion-text-color);
-      outline: none;
-      padding: 10px 0;
-      width: 100%;
+      color: var(--ion-color-primary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      ion-icon { font-size: 14px; }
     }
   }
 
-  .text-input {
-    width: 100%;
-    background: var(--ion-color-light);
-    border: 1.5px solid transparent;
-    border-radius: 12px;
-    padding: 14px 16px;
-    font-size: 15px;
-    color: var(--ion-text-color);
-    outline: none;
-    box-sizing: border-box;
-
-    &:focus { border-color: var(--ion-color-primary); }
-  }
-
-  .category-chips {
-    display: flex;
-    flex-wrap: wrap;
+  .merchant-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
 
-    .chip {
+    .merchant-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      padding: 12px;
       background: var(--ion-color-light);
-      border: 1.5px solid transparent;
-      border-radius: 20px;
-      padding: 8px 16px;
-      font-size: 13px;
-      font-weight: 500;
+      border: 2px solid transparent;
+      border-radius: 14px;
       cursor: pointer;
+      text-align: left;
       transition: all 0.2s;
-      color: var(--ion-text-color);
 
       &.active {
-        background: var(--ion-color-primary);
-        color: #fff;
         border-color: var(--ion-color-primary);
+        background: rgba(var(--ion-color-primary-rgb), 0.08);
       }
+
+      .merchant-emoji   { font-size: 22px; margin-bottom: 4px; }
+      .merchant-name    { font-size: 13px; font-weight: 700; color: var(--ion-text-color); line-height: 1.2; }
+      .merchant-amount  { font-size: 14px; font-weight: 800; color: var(--ion-color-primary); margin-top: 4px; }
+      .merchant-category { font-size: 10px; color: var(--ion-color-medium); font-weight: 500; }
     }
   }
 
-  .pay-btn {
-    margin-top: 8px;
+  .summary {
+    background: var(--ion-color-light);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+
+      &:not(:last-child) { border-bottom: 1px solid var(--ion-color-light-shade); padding-bottom: 8px; margin-bottom: 8px; }
+
+      .summary-label { font-size: 12px; color: var(--ion-color-medium); font-weight: 500; }
+      .summary-value { font-size: 14px; font-weight: 600; }
+      .summary-value.amount { color: var(--ion-color-primary); font-size: 16px; font-weight: 800; }
+    }
   }
+
+  .pay-btn { margin-top: 4px; }
 }

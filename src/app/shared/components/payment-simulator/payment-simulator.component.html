@@ -1,4 +1,5 @@
 <div class="simulator-container">
+
   <div class="simulator-header">
     <h2>Simular Pago</h2>
     <ion-button fill="clear" size="small" (click)="onCancel()">
@@ -7,7 +8,7 @@
   </div>
 
   <div class="section">
-    <p class="section-label">Selecciona una tarjeta</p>
+    <p class="section-label">Tarjeta</p>
     <div class="card-selector">
       <div
         *ngFor="let card of cards"
@@ -35,41 +36,41 @@
   </div>
 
   <div class="section">
-    <p class="section-label">Monto a pagar</p>
-    <div class="amount-input-wrapper">
-      <span class="currency">$</span>
-      <input
-        type="number"
-        class="amount-input"
-        placeholder="0"
-        [(ngModel)]="amount"
-        min="1"
-      />
+    <div class="merchant-header">
+      <p class="section-label">Comercio</p>
+      <button class="refresh-btn" (click)="refreshMerchants()">
+        <ion-icon name="refresh-outline"></ion-icon>
+        Generar nuevos
+      </button>
+    </div>
+
+    <div class="merchant-grid">
+      <button
+        *ngFor="let merchant of merchants"
+        class="merchant-card"
+        [class.active]="selectedMerchant?.name === merchant.name"
+        (click)="selectMerchant(merchant)"
+      >
+        <span class="merchant-emoji">{{ getCategoryEmoji(merchant.category) }}</span>
+        <span class="merchant-name">{{ merchant.name }}</span>
+        <span class="merchant-amount">${{ merchant.amount | number }}</span>
+        <span class="merchant-category">{{ merchant.category }}</span>
+      </button>
     </div>
   </div>
 
-  <div class="section">
-    <p class="section-label">Descripción</p>
-    <input
-      type="text"
-      class="text-input"
-      placeholder="Ej: Almuerzo, Uber, Netflix..."
-      [(ngModel)]="description"
-      maxlength="60"
-    />
-  </div>
-
-  <div class="section">
-    <p class="section-label">Categoría</p>
-    <div class="category-chips">
-      <button
-        *ngFor="let cat of categories"
-        class="chip"
-        [class.active]="category === cat"
-        (click)="category = cat"
-      >
-        {{ cat }}
-      </button>
+  <div class="summary" *ngIf="selectedCard && selectedMerchant">
+    <div class="summary-row">
+      <span class="summary-label">Comercio</span>
+      <span class="summary-value">{{ selectedMerchant.name }}</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">Monto</span>
+      <span class="summary-value amount">${{ selectedMerchant.amount | number }}</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">Tarjeta</span>
+      <span class="summary-value">•••• {{ selectedCard.cardNumber }}</span>
     </div>
   </div>
 
@@ -83,4 +84,5 @@
     <ion-icon name="checkmark-outline" slot="start"></ion-icon>
     Confirmar Pago
   </ion-button>
+
 </div>

@@ -11,7 +11,9 @@
 
   <div class="tx-info">
     <span class="tx-description">{{ transaction.description }}</span>
-    <span class="tx-meta">{{ transaction.category }} · {{ getFormattedDate(transaction.date) }}</span>
+    <span class="tx-meta">
+      {{ transaction.merchant || transaction.category }} · {{ getFormattedDate(transaction.date) }}
+    </span>
   </div>
 
   <div class="tx-amount" [ngClass]="transaction.status">
