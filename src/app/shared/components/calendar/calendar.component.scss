@@ -1,0 +1,56 @@
+.calendar {
+  background: var(--ion-background-color);
+  border-radius: 16px;
+  padding: 12px;
+
+  .cal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+
+    .month-label {
+      font-size: 15px;
+      font-weight: 700;
+    }
+  }
+
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    text-align: center;
+
+    .day-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ion-color-medium);
+      padding: 4px 0 8px;
+    }
+
+    .day-cell {
+      padding: 8px 4px;
+      border-radius: 50%;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.15s;
+
+      &:hover { background: var(--ion-color-light); }
+
+      &.other-month { color: var(--ion-color-medium); opacity: 0.4; }
+
+      &.today {
+        font-weight: 700;
+        color: var(--ion-color-primary);
+        border: 1.5px solid var(--ion-color-primary);
+      }
+
+      &.selected {
+        background: var(--ion-color-primary);
+        color: #fff;
+        font-weight: 700;
+        border: none;
+      }
+    }
+  }
+}

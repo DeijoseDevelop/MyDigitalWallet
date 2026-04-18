@@ -1,3 +1,28 @@
-<p>
-  calendar works!
-</p>
+<div class="calendar">
+  <div class="cal-header">
+    <ion-button fill="clear" size="small" (click)="prevMonth()">
+      <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+    <span class="month-label">{{ monthLabel }}</span>
+    <ion-button fill="clear" size="small" (click)="nextMonth()">
+      <ion-icon name="chevron-forward-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+
+  <div class="cal-grid">
+    <div class="day-name" *ngFor="let name of dayNames">{{ name }}</div>
+
+    <ng-container *ngFor="let week of weeks">
+      <div
+        *ngFor="let day of week"
+        class="day-cell"
+        [class.other-month]="!day.isCurrentMonth"
+        [class.today]="day.isToday"
+        [class.selected]="day.isSelected"
+        (click)="selectDay(day)"
+      >
+        {{ day.date.getDate() }}
+      </div>
+    </ng-container>
+  </div>
+</div>
