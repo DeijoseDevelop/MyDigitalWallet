@@ -6,9 +6,9 @@ import { NotificationService } from 'src/app/core/services/notification.service'
 import { ToastService } from 'src/app/core/services/toast.service';
 import { LoadingService } from 'src/app/core/services/loading.service';
 import { DialogService } from 'src/app/core/services/dialog.service';
-import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 import { BiometricService } from 'src/app/core/services/biometric.service';
 import { UserService } from 'src/app/core/services/user.service';
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 
 export const CATEGORIES = [
   'Comida', 'Transporte', 'Servicios', 'Compras', 'Salud', 'Ocio'
@@ -26,13 +26,14 @@ export class PaymentPage implements OnInit {
   cards: Card[] = [];
   transactions: Transaction[] = [];
   categories = CATEGORIES;
-  loading = true;
-  loadingTx = true;
+  loading     = true;
+  loadingTx   = true;
 
   filteredTransactions: Transaction[] = [];
-  filterDate: Date | null = null;
-  filterCategory = '';
-  activeSegment = 'pay';
+  filterDate:     Date | null = null;
+  filterCategory  = '';
+  filterCardId    = '';
+  activeSegment   = 'pay';
 
   constructor(
     private fb: FormBuilder,
@@ -42,14 +43,14 @@ export class PaymentPage implements OnInit {
     private toastService: ToastService,
     private loadingService: LoadingService,
     private dialogService: DialogService,
-    private userService: UserService,
     private biometricService: BiometricService,
+    private userService: UserService
   ) {
     this.paymentForm = this.fb.group({
-      cardId: ['', Validators.required],
-      amount: [null, [Validators.required, Validators.min(1)]],
+      cardId:      ['', Validators.required],
+      amount:      [null, [Validators.required, Validators.min(1)]],
       description: ['', Validators.required],
-      category: ['', Validators.required],
+      category:    ['', Validators.required],
     });
   }
 
@@ -72,7 +73,7 @@ export class PaymentPage implements OnInit {
 
   async loadCards() {
     this.loading = true;
-    this.cards = await this.cardService.getCards();
+    this.cards   = await this.cardService.getCards();
     if (this.cards.length > 0) {
       this.paymentForm.get('cardId')?.setValue(this.cards[0].id);
     }
@@ -80,15 +81,71 @@ export class PaymentPage implements OnInit {
   }
 
   async loadTransactions() {
-    this.loadingTx = true;
+    this.loadingTx    = true;
     this.transactions = await this.paymentService.getTransactions();
     this.applyFilters();
-    this.loadingTx = false;
+    this.loadingTx    = false;
   }
 
   get selectedCard(): Card | undefined {
     const id = this.paymentForm.get('cardId')?.value;
     return this.cards.find(c => c.id === id);
+  }
+
+  onDateFilter(date: Date | null) {
+    this.filterDate = date;
+    this.applyFilters();
+  }
+
+  onCategoryFilter(category: string) {
+    this.filterCategory = category;
+    this.applyFilters();
+  }
+
+  onCardFilter(cardId: string) {
+    Haptics.impact({ style: ImpactStyle.Light });
+    this.filterCardId = this.filterCardId === cardId ? '' : cardId;
+    this.applyFilters();
+  }
+
+  clearAllFilters() {
+    Haptics.impact({ style: ImpactStyle.Medium });
+    this.filterDate     = null;
+    this.filterCategory = '';
+    this.filterCardId   = '';
+    this.applyFilters();
+  }
+
+  get activeFilterCount(): number {
+    return [this.filterDate, this.filterCategory, this.filterCardId]
+      .filter(Boolean).length;
+  }
+
+  getCardById(id: string): Card | undefined {
+    return this.cards.find(c => c.id === id);
+  }
+
+  private applyFilters() {
+    let result = [...this.transactions];
+
+    if (this.filterDate) {
+      result = result.filter(tx => {
+        const txDate = tx.date?.toDate ? tx.date.toDate() : new Date(tx.date);
+        return txDate.toDateString() === this.filterDate!.toDateString();
+      });
+    }
+
+    if (this.filterCategory) {
+      result = result.filter(tx =>
+        tx.category.toLowerCase() === this.filterCategory.toLowerCase()
+      );
+    }
+
+    if (this.filterCardId) {
+      result = result.filter(tx => tx.cardId === this.filterCardId);
+    }
+
+    this.filteredTransactions = result;
   }
 
   async onPay() {
@@ -101,7 +158,6 @@ export class PaymentPage implements OnInit {
     const card = this.cards.find(c => c.id === cardId);
     if (!card) return;
 
-    // Verificar biometría si está habilitada
     const userData = await this.userService.getUserData();
     if (userData?.biometryEnabled) {
       const available = await this.biometricService.isAvailable();
@@ -129,7 +185,9 @@ export class PaymentPage implements OnInit {
       await Haptics.notification({ type: NotificationType.Success });
       await this.toastService.success('¡Pago realizado con éxito!');
       this.paymentForm.reset();
-      if (this.cards.length > 0) this.paymentForm.get('cardId')?.setValue(this.cards[0].id);
+      if (this.cards.length > 0) {
+        this.paymentForm.get('cardId')?.setValue(this.cards[0].id);
+      }
       await this.loadTransactions();
     } catch (error: any) {
       await Haptics.notification({ type: NotificationType.Error });
@@ -137,34 +195,5 @@ export class PaymentPage implements OnInit {
     } finally {
       await this.loadingService.hide();
     }
-  }
-
-  onDateFilter(date: Date | null) {
-    this.filterDate = date;
-    this.applyFilters();
-  }
-
-  onCategoryFilter(category: string) {
-    this.filterCategory = category;
-    this.applyFilters();
-  }
-
-  private applyFilters() {
-    let result = [...this.transactions];
-
-    if (this.filterDate) {
-      result = result.filter(tx => {
-        const txDate = tx.date?.toDate ? tx.date.toDate() : new Date(tx.date);
-        return txDate.toDateString() === this.filterDate!.toDateString();
-      });
-    }
-
-    if (this.filterCategory) {
-      result = result.filter(tx =>
-        tx.category.toLowerCase() === this.filterCategory.toLowerCase()
-      );
-    }
-
-    this.filteredTransactions = result;
   }
 }

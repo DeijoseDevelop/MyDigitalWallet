@@ -1,25 +1,18 @@
 import { Injectable } from '@angular/core';
-import { ToastController } from '@ionic/angular';
-
-export type ToastColor = 'success' | 'danger' | 'warning' | 'primary' | 'dark';
+import { Toast } from '@capacitor/toast';
 
 @Injectable({ providedIn: 'root' })
 export class ToastService {
 
-  constructor(private toastCtrl: ToastController) {}
-
-  async show(message: string, color: ToastColor = 'dark', duration = 3000) {
-    const toast = await this.toastCtrl.create({
-      message,
-      duration,
-      color,
+  async show(message: string, duration: 'short' | 'long' = 'short') {
+    await Toast.show({
+      text:     message,
+      duration: duration,
       position: 'bottom',
-      buttons: [{ icon: 'close', role: 'cancel' }]
     });
-    await toast.present();
   }
 
-  success(message: string) { return this.show(message, 'success'); }
-  error(message: string)   { return this.show(message, 'danger'); }
-  warning(message: string) { return this.show(message, 'warning'); }
+  async success(message: string) { return this.show(message, 'short'); }
+  async error(message: string)   { return this.show(message, 'long'); }
+  async warning(message: string) { return this.show(message, 'short'); }
 }
