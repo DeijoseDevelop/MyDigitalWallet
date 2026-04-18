@@ -1,3 +1,26 @@
-<p>
-  card works!
-</p>
+<div class="card-wrapper" [ngClass]="card.type">
+  <div class="card-top">
+    <span class="card-bank">MyDigitalWallet</span>
+    <ion-icon [name]="card.type === 'visa' ? 'card-outline' : 'card'"></ion-icon>
+  </div>
+
+  <div class="card-number">
+    **** **** **** {{ card.cardNumber }}
+  </div>
+
+  <div class="card-bottom">
+    <div class="card-holder">
+      <span class="label">Titular</span>
+      <span class="value">{{ card.cardholderName }}</span>
+    </div>
+    <div class="card-expiry">
+      <span class="label">Vence</span>
+      <span class="value">{{ card.expiryDate }}</span>
+    </div>
+    <img
+      [src]="card.type === 'visa' ? 'assets/visa.svg' : 'assets/mastercard.svg'"
+      class="card-brand"
+      [alt]="card.type"
+    />
+  </div>
+</div>

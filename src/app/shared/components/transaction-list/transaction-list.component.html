@@ -1,3 +1,19 @@
-<p>
-  transaction-list works!
-</p>
+<div class="tx-list">
+  <div class="tx-list-header">
+    <span class="title">Últimos movimientos</span>
+  </div>
+
+  <ng-container *ngIf="transactions.length > 0; else empty">
+    <app-transaction-item
+      *ngFor="let tx of transactions"
+      [transaction]="tx"
+    ></app-transaction-item>
+  </ng-container>
+
+  <ng-template #empty>
+    <div class="empty-state">
+      <ion-icon name="document-text-outline"></ion-icon>
+      <p>No hay transacciones aún</p>
+    </div>
+  </ng-template>
+</div>

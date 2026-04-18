@@ -1,3 +1,12 @@
-<p>
-  balance-display works!
-</p>
+<div class="balance-container">
+  <div class="balance-header">
+    <span class="label">Saldo Total</span>
+    <ion-button fill="clear" size="small" (click)="toggleVisibility()">
+      <ion-icon [name]="visible ? 'eye-outline' : 'eye-off-outline'" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+  <div class="balance-amount">
+    <span *ngIf="visible">{{ balance | currency:'COP':'symbol':'1.0-0' }}</span>
+    <span *ngIf="!visible" class="hidden-balance">••••••••</span>
+  </div>
+</div>

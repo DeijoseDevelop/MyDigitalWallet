@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-skeleton-loading',
@@ -6,10 +6,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./skeleton-loading.component.scss'],
   standalone: false,
 })
-export class SkeletonLoadingComponent  implements OnInit {
+export class SkeletonLoadingComponent {
+  @Input() type: 'card' | 'list' | 'balance' = 'list';
+  @Input() lines: number = 4;
 
-  constructor() { }
-
-  ngOnInit() {}
-
+  get lineArray() { return Array(this.lines); }
 }

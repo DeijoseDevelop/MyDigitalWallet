@@ -1,0 +1,26 @@
+.skeleton-balance {
+  padding: 20px 24px;
+  background: var(--ion-color-light);
+  border-radius: 20px;
+}
+
+.skeleton-card {
+  padding: 4px 0;
+}
+
+.skeleton-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--ion-color-light);
+
+  .skeleton-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+
+  .skeleton-text { flex: 1; }
+}

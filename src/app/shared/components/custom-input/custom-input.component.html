@@ -1,3 +1,15 @@
-<p>
-  custom-input works!
-</p>
+<div class="custom-field" [class.has-error]="touched && errorMessage">
+  <label *ngIf="label" class="field-label">{{ label }}</label>
+  <div class="field-wrapper">
+    <ion-icon *ngIf="icon" [name]="icon" class="field-icon"></ion-icon>
+    <input
+      [type]="type"
+      [placeholder]="placeholder"
+      [value]="value"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+      class="field-input"
+    />
+  </div>
+  <span *ngIf="touched && errorMessage" class="error-msg">{{ errorMessage }}</span>
+</div>

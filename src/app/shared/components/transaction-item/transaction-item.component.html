@@ -1,3 +1,12 @@
-<p>
-  transaction-item works!
-</p>
+<div class="tx-item">
+  <div class="tx-icon">
+    <ion-icon [name]="getCategoryIcon(transaction.category)"></ion-icon>
+  </div>
+  <div class="tx-info">
+    <span class="tx-description">{{ transaction.description }}</span>
+    <span class="tx-meta">{{ transaction.category }} · {{ getFormattedDate(transaction.date) }}</span>
+  </div>
+  <div class="tx-amount" [ngClass]="transaction.status">
+    -{{ transaction.amount | currency:'COP':'symbol':'1.0-0' }}
+  </div>
+</div>

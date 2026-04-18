@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
+
+export type QuickAction = 'transfer' | 'recharge' | 'pay';
 
 @Component({
   selector: 'app-quick-actions',
@@ -6,10 +8,16 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./quick-actions.component.scss'],
   standalone: false,
 })
-export class QuickActionsComponent  implements OnInit {
+export class QuickActionsComponent {
+  @Output() actionSelected = new EventEmitter<QuickAction>();
 
-  constructor() { }
+  actions = [
+    { id: 'transfer' as QuickAction, label: 'Transferir', icon: 'swap-horizontal-outline' },
+    { id: 'recharge' as QuickAction, label: 'Recargar',   icon: 'add-circle-outline' },
+    { id: 'pay'      as QuickAction, label: 'Pagar',      icon: 'receipt-outline' },
+  ];
 
-  ngOnInit() {}
-
+  onAction(id: QuickAction) {
+    this.actionSelected.emit(id);
+  }
 }

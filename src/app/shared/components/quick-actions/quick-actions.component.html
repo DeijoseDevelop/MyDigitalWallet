@@ -1,3 +1,12 @@
-<p>
-  quick-actions works!
-</p>
+<div class="quick-actions">
+  <button
+    *ngFor="let action of actions"
+    class="action-btn"
+    (click)="onAction(action.id)"
+  >
+    <div class="icon-wrapper">
+      <ion-icon [name]="action.icon"></ion-icon>
+    </div>
+    <span>{{ action.label }}</span>
+  </button>
+</div>

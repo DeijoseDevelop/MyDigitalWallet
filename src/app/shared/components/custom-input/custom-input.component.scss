@@ -1,0 +1,53 @@
+.custom-field {
+  margin-bottom: 16px;
+
+  .field-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ion-text-color);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .field-wrapper {
+    display: flex;
+    align-items: center;
+    background: var(--ion-color-light);
+    border-radius: 12px;
+    padding: 0 14px;
+    border: 1.5px solid transparent;
+    transition: border-color 0.2s;
+
+    &:focus-within {
+      border-color: var(--ion-color-primary);
+    }
+
+    .field-icon {
+      font-size: 18px;
+      color: var(--ion-color-medium);
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    .field-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 14px 0;
+      font-size: 15px;
+      color: var(--ion-text-color);
+      outline: none;
+    }
+  }
+
+  &.has-error .field-wrapper {
+    border-color: var(--ion-color-danger);
+  }
+
+  .error-msg {
+    font-size: 11px;
+    color: var(--ion-color-danger);
+    margin-top: 4px;
+    display: block;
+  }
+}
