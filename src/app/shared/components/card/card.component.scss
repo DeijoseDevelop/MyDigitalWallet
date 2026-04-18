@@ -1,38 +1,74 @@
-.card-wrapper {
-  border-radius: 16px;
-  padding: 20px;
-  min-width: 300px;
-  min-height: 170px;
+.wallet-card {
+  width: 100%;
+  height: 190px;
+  border-radius: 20px;
+  padding: 22px 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   color: #fff;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
   position: relative;
   overflow: hidden;
 
-  &.visa {
-    background: linear-gradient(135deg, #1a1f71, #2563eb);
+  &::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
   }
 
-  &.mastercard {
-    background: linear-gradient(135deg, #1a1a1a, #eb4c2d);
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    left: -20px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
   }
 
   .card-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 13px;
-    font-weight: 600;
-    ion-icon { font-size: 22px; }
+
+    .card-bank {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+    }
+
+    .card-chip {
+      width: 36px;
+      height: 28px;
+      background: linear-gradient(135deg, #d4a843, #f0d060, #c8922a);
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      padding: 5px 4px;
+
+      .chip-line {
+        height: 2px;
+        background: rgba(0, 0, 0, 0.25);
+        border-radius: 1px;
+      }
+    }
   }
 
   .card-number {
-    font-size: 18px;
-    letter-spacing: 3px;
+    font-size: 20px;
+    letter-spacing: 4px;
     font-weight: 500;
     text-align: center;
+    font-family: 'Courier New', monospace;
   }
 
   .card-bottom {
@@ -40,12 +76,55 @@
     justify-content: space-between;
     align-items: flex-end;
 
-    .label { font-size: 10px; opacity: 0.7; display: block; }
-    .value { font-size: 13px; font-weight: 600; }
+    .label {
+      font-size: 9px;
+      opacity: 0.65;
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
 
-    .card-brand {
-      height: 32px;
-      object-fit: contain;
+    .value {
+      font-size: 13px;
+      font-weight: 600;
+      display: block;
+      margin-top: 2px;
+    }
+  }
+}
+
+.visa-text {
+  font-size: 22px;
+  font-weight: 900;
+  font-style: italic;
+  color: #fff;
+  letter-spacing: -1px;
+  font-family: 'Times New Roman', serif;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.mc-circles {
+  position: relative;
+  width: 44px;
+  height: 28px;
+
+  .mc-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    opacity: 0.92;
+
+    &.mc-left {
+      left: 0;
+      background: #eb001b;
+    }
+
+    &.mc-right {
+      left: 16px;
+      background: #f79e1b;
+      mix-blend-mode: screen;
     }
   }
 }

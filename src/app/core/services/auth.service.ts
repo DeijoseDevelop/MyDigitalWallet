@@ -1,16 +1,19 @@
 // Importamos directamente del SDK de Firebase, NO de AngularFire
-import { 
-  getAuth, 
-  signInWithCredential, 
-  GoogleAuthProvider, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
+import {
+  getAuth,
+  signInWithCredential,
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+  linkWithCredential,
+  EmailAuthProvider,
 } from 'firebase/auth';
 import { GoogleSignIn } from '@capawesome/capacitor-google-sign-in';
 import { environment } from 'src/environments/environment';
+import { Injectable } from '@angular/core';
 
+@Injectable({ providedIn: 'root' })
 export class AuthService {
   private auth = getAuth();
 
@@ -39,12 +42,31 @@ export class AuthService {
       const firebaseJWT = await userCredential.user.getIdToken();
 
       console.log('🌟 TOKEN DE FIREBASE PARA EL PROFE:', firebaseJWT);
-      
+
       return userCredential.user;
     } catch (error) {
       console.error('Error en Login:', error);
       throw error;
     }
+  }
+
+  getCurrentUserProfile() {
+    const user = this.auth.currentUser;
+    if (!user) return null;
+    return {
+      uid: user.uid,
+      email: user.email ?? '',
+      displayName: user.displayName ?? '',
+      photoURL: user.photoURL ?? '',
+    };
+  }
+
+  async linkPassword(email: string, password: string): Promise<void> {
+    const user = this.auth.currentUser;
+    if (!user) throw new Error('No hay usuario autenticado');
+
+    const credential = EmailAuthProvider.credential(email, password);
+    await linkWithCredential(user, credential);
   }
 
   async register(email: string, password: string) {

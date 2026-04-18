@@ -36,25 +36,39 @@
       <app-skeleton-loading *ngIf="loading" type="card"></app-skeleton-loading>
 
       <ng-container *ngIf="!loading">
-        <ion-slides *ngIf="cards.length > 0" [options]="{ slidesPerView: 1.1, spaceBetween: 12 }">
-          <ion-slide *ngFor="let card of cards">
-            <app-card [card]="card"></app-card>
-          </ion-slide>
-        </ion-slides>
 
-        <div *ngIf="cards.length === 0" class="empty-cards" (click)="goToAddCard()">
+        <div *ngIf="orderedCards.length === 0" class="empty-cards" (click)="goToAddCard()">
           <ion-icon name="card-outline"></ion-icon>
           <p>Agrega tu primera tarjeta</p>
         </div>
+
+        <div
+          *ngIf="orderedCards.length > 0"
+          class="wallet-stack"
+          [style.height.px]="stackHeight"
+          (touchstart)="onTouchStart($event)"
+          (touchmove)="onTouchMove($event)"
+          (touchend)="onTouchEnd($event)"
+        >
+          <div
+            *ngFor="let card of orderedCards; let i = index"
+            class="stack-item"
+            [class.is-top]="i === 0"
+            [class.is-animating]="isAnimating"
+            [style.transform]="getTransform(i)"
+            [style.z-index]="getZIndex(i)"
+            [style.opacity]="getOpacity(i)"
+          >
+            <app-card [card]="card"></app-card>
+          </div>
+        </div>
+
       </ng-container>
     </section>
 
     <section class="section-transactions">
       <app-skeleton-loading *ngIf="loading" type="list" [lines]="4"></app-skeleton-loading>
-      <app-transaction-list
-        *ngIf="!loading"
-        [transactions]="transactions"
-      ></app-transaction-list>
+      <app-transaction-list *ngIf="!loading" [transactions]="transactions"></app-transaction-list>
     </section>
 
   </div>

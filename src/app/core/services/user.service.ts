@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { FirestoreService } from './firestore';
-import { AuthService } from './auth';
+import { FirestoreService } from './firestore.service';
+import { AuthService } from './auth.service';
 
 export interface UserProfile {
   uid: string;

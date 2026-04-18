@@ -28,6 +28,16 @@ const routes: Routes = [
     path: 'payment',
     loadChildren: () => import('./pages/payment/payment.module').then(m => m.PaymentPageModule),
     canActivate: [authGuard]
+  },
+  {
+    path: 'complete-profile',
+    loadChildren: () => import('./pages/complete-profile/complete-profile.module')
+      .then(m => m.CompleteProfilePageModule),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'complete-profile',
+    loadChildren: () => import('./pages/complete-profile/complete-profile.module').then( m => m.CompleteProfilePageModule)
   }
 ];
 

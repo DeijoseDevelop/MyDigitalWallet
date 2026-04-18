@@ -1,7 +1,12 @@
-<div class="card-wrapper" [ngClass]="card.type">
+<div class="wallet-card" [ngClass]="card.type" [style.background]="card.color">
+
   <div class="card-top">
     <span class="card-bank">MyDigitalWallet</span>
-    <ion-icon [name]="card.type === 'visa' ? 'card-outline' : 'card'"></ion-icon>
+    <div class="card-chip">
+      <div class="chip-line"></div>
+      <div class="chip-line"></div>
+      <div class="chip-line"></div>
+    </div>
   </div>
 
   <div class="card-number">
@@ -17,10 +22,17 @@
       <span class="label">Vence</span>
       <span class="value">{{ card.expiryDate }}</span>
     </div>
-    <img
-      [src]="card.type === 'visa' ? 'assets/visa.svg' : 'assets/mastercard.svg'"
-      class="card-brand"
-      [alt]="card.type"
-    />
+    <div class="brand-logo" [ngClass]="card.type">
+      <ng-container *ngIf="card.type === 'visa'">
+        <span class="visa-text">VISA</span>
+      </ng-container>
+      <ng-container *ngIf="card.type === 'mastercard'">
+        <div class="mc-circles">
+          <div class="mc-circle mc-left"></div>
+          <div class="mc-circle mc-right"></div>
+        </div>
+      </ng-container>
+    </div>
   </div>
+
 </div>

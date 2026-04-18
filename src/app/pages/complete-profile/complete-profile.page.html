@@ -1,0 +1,65 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Completa tu perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <div class="profile-header">
+    <img *ngIf="photoURL" [src]="photoURL" class="avatar" referrerpolicy="no-referrer" />
+    <div *ngIf="!photoURL" class="avatar-placeholder">
+      <ion-icon name="person-outline"></ion-icon>
+    </div>
+    <h2>{{ googleName }}</h2>
+    <p class="email">{{ googleEmail }}</p>
+    <p class="subtitle">Solo necesitamos un par de datos más para completar tu cuenta.</p>
+  </div>
+
+  <form [formGroup]="form">
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Nombre</label>
+        <input type="text" class="form-input" formControlName="nombre" placeholder="Nombre" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Apellido</label>
+        <input type="text" class="form-input" formControlName="apellido" placeholder="Apellido" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Tipo de documento</label>
+      <ion-select formControlName="tipoDocumento" interface="popover" placeholder="Selecciona">
+        <ion-select-option value="CC">Cédula de Ciudadanía</ion-select-option>
+        <ion-select-option value="CE">Cédula de Extranjería</ion-select-option>
+        <ion-select-option value="PA">Pasaporte</ion-select-option>
+      </ion-select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Número de documento</label>
+      <input type="tel" class="form-input" formControlName="numeroDocumento" placeholder="Ej: 1234567890" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">País</label>
+      <input type="text" class="form-input" formControlName="pais" placeholder="Ej: Colombia" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Contraseña</label>
+      <input type="password" class="form-input" formControlName="password" placeholder="Mínimo 6 caracteres" />
+      <span *ngIf="form.get('password')?.touched && form.get('password')?.hasError('minlength')" class="error-msg">
+        La contraseña debe tener mínimo 6 caracteres.
+      </span>
+    </div>
+
+    <ion-button expand="block" shape="round" class="ion-margin-top" [disabled]="form.invalid" (click)="onSubmit()">
+      Comenzar
+    </ion-button>
+
+  </form>
+
+</ion-content>
