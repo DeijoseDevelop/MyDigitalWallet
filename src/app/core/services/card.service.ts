@@ -18,25 +18,26 @@ export class CardService {
   constructor(
     private firestoreService: FirestoreService,
     private userService: UserService
-  ) {}
+  ) { }
 
   luhnCheck(cardNumber: string): boolean {
     const digits = cardNumber.replace(/\s|-/g, '');
     if (!/^\d+$/.test(digits)) return false;
 
-    let sum = 0;
-    let alternate = false;
+    return digits
+      .split('')
+      .reverse()
+      .reduce((sum: number, digit: string, i: number) => {
+        let currentDigit = Number(digit);
 
-    for (let i = digits.length - 1; i >= 0; i--) {
-      let n = parseInt(digits[i], 10);
-      if (alternate) {
-        n *= 2;
-        if (n > 9) n -= 9;
-      }
-      sum += n;
-      alternate = !alternate;
-    }
-    return sum % 10 === 0;
+        if (i % 2 !== 0) {
+          currentDigit *= 2;
+          if (currentDigit > 9) currentDigit -= 9;
+        }
+
+        return sum + currentDigit;
+
+      }, 0) % 10 === 0;
   }
 
   detectCardType(cardNumber: string): 'visa' | 'mastercard' {
